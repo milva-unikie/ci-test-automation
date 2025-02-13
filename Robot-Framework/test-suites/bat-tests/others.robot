@@ -38,10 +38,11 @@ Check systemctl status
     [Setup]     Connect to ghaf host
     ${status}   ${output}   Run Keyword And Ignore Error    Verify Systemctl status
     IF  '${status}' == 'FAIL'
+        ${failed_services}=    Get Failed or Starting Services    ${output}
         IF  "NUC" in "${DEVICE}"
             Skip    "Known issue: SP-4632"
         ELSE
-            FAIL    ${output}
+            FAIL    ${failed_services}
         END
     END
     [Teardown]  Close All Connections
@@ -89,3 +90,15 @@ Check Memory status
     ${storage}  Check Storagevm Size
     Should Be True  ${memory} > ${storage} > ${100}
     Should Be True  ${${memory}*${0.80}} <= ${storage}
+
+*** Keywords ***
+Get Failed or Starting Services
+    [Arguments]    ${output}
+    ${failed}=    Create List
+    ${lines}=    Split To Lines    ${output}
+    FOR    ${line}    IN    @{lines}
+        IF  "failed" in "${line}" or "starting" in "${line}"
+            Append To List    ${failed}    ${line}
+        END
+    END
+    RETURN    ${failed}
