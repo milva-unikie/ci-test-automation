@@ -24,11 +24,18 @@ BAT tests setup
     Initialize Variables, Connect And Start Logging
 
     IF  "Lenovo" in "${DEVICE}"
-        Connect to netvm
         Connect to VM         ${GUI_VM}
         Save most common icons and paths to icons
         Create test user
-        Log in via GUI
+        Start ydotoold
+        ${logout_status}    Check if logged out    1
+        IF  ${logout_status}
+            Log in via GUI
+        ELSE
+            ${lock}       Check if locked
+            IF  ${lock}   Unlock
+        END
+        Stop ydotoold
     END
     Switch Connection    ${CONNECTION}
 
@@ -37,6 +44,8 @@ BAT tests teardown
     Connect to ghaf host
     Log journctl
     IF  "Lenovo" in "${DEVICE}"
+        Start ydotoold
         Log out
+        Stop ydotoold
     END
     Close All Connections

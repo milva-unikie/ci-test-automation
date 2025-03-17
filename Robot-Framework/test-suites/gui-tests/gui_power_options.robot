@@ -10,8 +10,8 @@ Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/power_meas_keywords.resource
 Library             ../../lib/SwitchbotLibrary.py  ${SWITCH_TOKEN}  ${SWITCH_SECRET}
+Test Setup          GUI Power Test Setup
 Test Teardown       Close All Connections
-
 
 *** Test Cases ***
 
@@ -22,12 +22,10 @@ GUI Suspend and wake up
     ...               Check that the device is awake.
     ...               Logs device power consumption during the test
     ...               if power measurement tooling is set.
-    [Tags]            lenovo-x1   SP-T208-2
+    [Tags]            SP-T208-2  #lenovo-x1 feature is broken
     Start power measurement       ${BUILD_ID}   timeout=180
     Set start timestamp
-    Connect to netvm
-    Connect to VM                 ${GUI_VM}
-    Click power menu item         suspend
+    Select power menu option      index=4
     ${device_not_available}       Run Keyword And Return Status  Wait Until Keyword Succeeds  15s  2s  Check If Ping Fails
     IF  ${device_not_available} == True
         Log To Console            Device suspended.
@@ -58,26 +56,18 @@ GUI Suspend and wake up
 
 GUI Lock and Unlock
     [Documentation]   Lock the screen via GUI taskbar lock icon and check that the screen is locked.
-    ...               Unlock lock screen by typing the password and check that desktop is available
+    ...               Unlock lock screen by typing the password and check that desktop is available.
     [Tags]            lenovo-x1   SP-T208-3   SP-T208-4   lock
-    Connect to netvm
-    Connect to VM                 ${GUI_VM}
-    Click power menu item         lock
-    ${lock}                       Check if locked
-    IF  ${lock}
-        Log To Console            Screen lock detected
-    ELSE
-        Log To Console            Screen lock not active
-        FAIL                      Failed to lock the screen
-    END
+    Select power menu option   index=2
+    ${lock}           Check if locked
+    IF  not ${lock}   FAIL    Failed to lock the screen
     Unlock
-    Verify login
 
 GUI Reboot
     [Documentation]   Reboot the device via GUI reboot icon.
     ...               Check that it shuts down. Check that it turns on and boots to login screen.
-    [Tags]            lenovo-x1   SP-T208-1
-    Click power menu item         restart
+    [Tags]            SP-T208-1  #lenovo-x1 feature is broken
+    Select power menu option      index=5  confirmation=true
     ${device_not_available}       Run Keyword And Return Status  Wait Until Keyword Succeeds  15s  2s  Check If Ping Fails
     IF  ${device_not_available} == True
         Log To Console            Device is down
@@ -97,32 +87,48 @@ GUI Reboot
     ELSE
         Connect to ghaf host
     END
-    Verify logout
-    Log To Console                LOGGED_IN_STATUS after reboot
-    Log To Console                ${LOGGED_IN_STATUS}
-    Run Keyword If                ${LOGGED_IN_STATUS}  FAIL  Desktop detected. Device failed to boot to login screen.
+    ${logout_status}     Check if logged out
+    IF   not ${logout_status}  FAIL  Desktop detected. Device failed to boot to login screen.
 
-GUI Log in and log out
-    [Documentation]   Login and verify logged in state.
-    ...               Logout via gui icon and verify that desktop is not available.
-    [Tags]            lenovo-x1   SP-T149   loginlogout
-    Connect to VM if not already connected  gui-vm
+GUI Log out and log in
+    [Documentation]   Logout via GUI icon and verify logged out state.
+    ...               Login and verify that desktop is available.
+    [Tags]            lenovo-x1   SP-T149   logoutlogin
+    Log out via GUI
+    ${logout_status}    Check if logged out      iterations=5
+    IF  not ${logout_status}  FAIL  Logout failed. Cosmic session still active after 5 sec.
     Log in via GUI
-    Verify login
-    Log out
-    Verify logout           iterations=5
-    Run Keyword If          ${LOGGED_IN_STATUS}  FAIL  Logout failed. Desktop still detected after 5 sec.
 
 
 *** Keywords ***
 
-Click power menu item
-    [Arguments]    ${icon_name}
-    Connect to VM if not already connected  gui-vm
+GUI Power Test Setup
+    Connect to netvm
+    Connect to VM       ${GUI_VM}
     Start ydotoold
-    Log To Console                Going to click the power icon
-    Get icon                      ghaf-artwork  power.svg  crop=0  background=black
-    Locate and click              ./icon.png  0.95  5
-    Log To Console                Going to click the ${icon_name} icon
-    Get icon                      ghaf-artwork  ${icon_name}.svg  crop=0  background=black
-    Locate and click              ./icon.png  0.95  5
+    Log in via GUI
+
+Select power menu option
+    [Documentation]    Open power menu by clicking the icon.
+    ...                Navigate to index and click.
+    [Arguments]        ${index}   ${confirmation}=false
+    Log To Console     Opening power menu
+    Locate and click   ./power.png  0.95  5
+    Tab and enter      tabs=${index}
+    # Some options have a separate confirmation window that needs to be clicked.
+    IF  '${confirmation}' == 'true'
+        Log To Console    CONFIRMING SELECTION
+        Tab and enter   tabs=2
+    END
+
+Log out via GUI
+    [Documentation]   Log out from power menu
+    ${logout_status}    Check if logged out    1
+    IF  ${logout_status}  RETURN
+    # Allow disabling logout in case of running test automation locally from ghaf-host.
+    # This prevents terminal from being shutdown and allows test run to finish.
+    IF  $DISABLE_LOGOUT == 'true'
+        Log To Console    Log out disabled. Skipping log out procedure.
+        RETURN
+    END
+    Select power menu option   index=3  confirmation=true

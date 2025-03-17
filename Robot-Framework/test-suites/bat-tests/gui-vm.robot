@@ -19,37 +19,37 @@ Test Teardown       Gui-vm Apps Test Teardown
 Start Calculator on LenovoX1
     [Documentation]   Start Calculator and verify process started
     [Tags]            calculator  SP-T202
-    Start XDG application  Calculator
+    Start XDG application  Calculator  gui_vm_app=true
     Check that the application was started    calculator
 
 Start Sticky Notes on LenovoX1
     [Documentation]   Start Sticky Notes and verify process started
     [Tags]            sticky_notes  SP-T201-1
-    Start XDG application  'Sticky Notes'
+    Start XDG application  'Sticky Notes'  gui_vm_app=true
     Check that the application was started    sticky-wrapped
 
-Start Control Panel on LenovoX1
+Start Ghaf Control Panel on LenovoX1
     [Documentation]   Start Control Panel and verify process started
     [Tags]            control_panel  SP-T205
-    Start XDG application  'Control Panel'
+    Start XDG application  'Ghaf Control Panel'  gui_vm_app=true
     Check that the application was started    ctrl-panel
 
 Start Bluetooth Settings on LenovoX1
     [Documentation]   Start Bluetooth Settings and verify process started
     [Tags]            bluetooth_settings  SP-T204
-    Start XDG application  'Bluetooth Settings'
+    Start XDG application  'Bluetooth Settings'  gui_vm_app=true
     Check that the application was started    blueman
 
 Start File Manager on LenovoX1
     [Documentation]   Start File Manager and verify process started
     [Tags]            file_manager  SP-T206
-    Start XDG application  'File Manager'
+    Start XDG application  'File Manager'  gui_vm_app=true
     Check that the application was started    pcmanfm
 
 Start Falcon AI on LenovoX1
     [Documentation]   Start Falcon AI and verify process started
     [Tags]            falcon_ai  SP-T223-1
-    Start XDG application  'Falcon AI'
+    Start XDG application  'Falcon AI'  gui_vm_app=true
     Check that the application was started    alpaca-wrapped
 
 *** Keywords ***

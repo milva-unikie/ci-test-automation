@@ -190,12 +190,16 @@ Check application name
     RETURN  '${app}[0]'
 
 Start XDG application
-    [Arguments]      ${app_name}
+    [Arguments]      ${app_name}  ${gui_vm_app}=false
     Log To Console   ${\n}Starting ${app_name}
     ${app_name}      Check application name  ${app_name}
     ${output}        Execute Command    cat /run/current-system/sw/share/applications/${app_name}.desktop
     ${path}          Get App Path From Desktop  ${output}
-    Execute Command  nohup sh -c '${path}' > output.log 2>&1 &
+    IF  $gui_vm_app
+        Execute Command  nohup sh -c 'DISPLAY=:1 ${path}' > output.log 2>&1 &
+    ELSE
+        Execute Command  nohup sh -c '${path}' > output.log 2>&1 &
+    END
     Sleep    8
     ${output}        Execute Command  cat output.log
     Log    ${output}
