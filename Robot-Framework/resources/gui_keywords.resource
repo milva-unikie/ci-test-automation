@@ -94,10 +94,11 @@ Locate image on screen
     Execute Command        mkdir test-images
     FOR   ${i}   IN RANGE  ${iterations}
         Log To Console     Taking screenshot
-        ${result}=         Execute Command  cosmic-screenshot --interactive=false --save-dir ./test-images  return_stdout=True   return_rc=True   timeout=10
-        IF  "${result[1]}" == "0"
-            SSHLibrary.Get File  ${result[0]}  ${GUI_TEMP_DIR}screenshot.png
-            Log To Console    Locating image ${image_to_be_searched} on ${result[0]}
+        ${result}=         Run Keyword And Ignore Error  Execute Command  cosmic-screenshot --interactive=false --save-dir ./test-images  return_stdout=True   return_rc=True   timeout=10
+        Log                ${result}
+        IF  "${result}[1][1]" == "0"
+            SSHLibrary.Get File  ${result[1][0]}  ${GUI_TEMP_DIR}screenshot.png
+            Log To Console    Locating image ${image_to_be_searched} on ${result[1][0]}
             ${pass_status}  ${coordinates}  Run Keyword And Ignore Error  Locate image  ${GUI_TEMP_DIR}${image_to_be_searched}   ${confidence}
         END
         IF    $pass_status=='PASS'    BREAK
