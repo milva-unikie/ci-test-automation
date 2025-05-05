@@ -32,7 +32,11 @@ Reboot LenovoX1
     [Arguments]       ${delay}=20
     [Documentation]   Turn off the laptop by pressing power button for 10 sec turn on by short pressing power button
     Log To Console    ${\n}Turning device off...
-    Press Button      ${SWITCH_BOT}-OFF
+    #Press Button      ${SWITCH_BOT}-OFF
+    IF  "${DEVICE_TYPE}" == "dell-7330"
+        Sleep    60
+    END
+    Log To Console    First sleep done
     Sleep    ${delay}
     Log To Console    Turning device on...
     Press Button      ${SWITCH_BOT}-ON
