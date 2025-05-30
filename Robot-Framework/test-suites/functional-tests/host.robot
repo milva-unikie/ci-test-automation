@@ -32,19 +32,22 @@ Check QSPI version
 Check systemctl status
     [Documentation]    Verify systemctl status is running
     [Tags]             bat  regression   pre-merge  SP-T98  nuc  orin-agx  orin-agx-64  orin-nx  riscv  lenovo-x1   dell-7330
-    ${status}   ${output}   Run Keyword And Ignore Error    Verify Systemctl status  close_conn=false
+    ${status}   ${output}   Run Keyword And Ignore Error    Verify Systemctl status
     IF  '${status}' == 'FAIL'
-        IF  "NUC" in "${DEVICE}"
-            Skip    "Known issue: SSRCSP-4632"
-        ELSE IF   "NX" in "${DEVICE}"
-            Skip    "Known issue: SSRCSP-6303"
-        ELSE IF   "AGX" in "${DEVICE}"
-            Skip    "Known issue: SSRCSP-6303"
-        ELSE IF   "Dell" in "${DEVICE}" and "autovt@ttyUSB0.service" in "${output}"
-            Skip    "Known issue: SSRCSP-6450"
-        ELSE
-            FAIL    ${output}
+        ${known_issues} =    Create List
+            NUC    ANY                     SSRCSP-4632
+            NX     nvfancontrol.service    SSRCSP-6303
+            AGX    nvfancontrol.service    SSRCSP-6303
+            AGX    systemd-rfkill.service  SSRCSP-6303
+            Dell   autovt@ttyUSB0.service  SSRCSP-6450
+
+        FOR    ${device}    ${service}    ${issue}    IN    @{known_issues}
+            ${device_match}=    Run Keyword And Return Status    Should Contain    ${DEVICE}    ${device}
+            Run Keyword If    '${device_match}' == 'True' and '${service}' == 'ANY'    Skip    Known issue: ${issue}
+            ${service_match}=    Run Keyword And Return Status    Should Contain    ${output}    ${service}
+            Run Keyword If    '${device_match}' == 'True' and '${service_match}' == 'True'    Skip    Known issue: ${issue}
         END
+        FAIL    ${output}
     END
 
 Check all VMs are running
