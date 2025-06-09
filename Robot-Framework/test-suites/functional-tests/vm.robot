@@ -13,7 +13,7 @@ Suite Teardown      Close All Connections
 
 Check internet connection in every VM
     [Documentation]    Pings google from every vm.
-    [Tags]             bat  regression  SP-T257  lenovo-x1  dell-7330
+    [Tags]             bat  regression  pre-merge  SP-T257  lenovo-x1  dell-7330
     ${failed_vms}=    Create List
     FOR  ${vm}  IN  @{VMS}
         Connect to VM    ${vm}
@@ -30,7 +30,7 @@ Check internet connection in every VM
 
 Check systemctl status in every VM
     [Documentation]    Check that systemctl status is running in every vm.
-    [Tags]             bat  regression  SP-T98-2  lenovo-x1  dell-7330
+    [Tags]             bat  regression  pre-merge  SP-T98-2  lenovo-x1  dell-7330
     ${failed_vms}=    Create List
     FOR  ${vm}  IN  @{VMS}
         Connect to VM    ${vm}

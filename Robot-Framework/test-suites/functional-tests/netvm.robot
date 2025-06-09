@@ -21,7 +21,7 @@ ${NETVM_SSH}       ${EMPTY}
 
 Verify NetVM is started
     [Documentation]         Verify that NetVM is active and running
-    [Tags]                  bat  regression  SP-T45  nuc  orin-agx  orin-agx-64  orin-nx  lenovo-x1   dell-7330
+    [Tags]                  bat  regression  pre-merge  SP-T45  nuc  orin-agx  orin-agx-64  orin-nx  lenovo-x1   dell-7330
     [Setup]                 Connect to ghaf host
     Verify service status   service=${netvm_service}
     Check Network Availability      ${NETVM_IP}    expected_result=True    range=5
