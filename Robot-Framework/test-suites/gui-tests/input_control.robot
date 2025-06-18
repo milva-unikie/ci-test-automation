@@ -27,5 +27,5 @@ Change brightness with keyboard shortcuts
 
 GUI Input Test Setup
     Connect to netvm
-    Connect to VM       ${GUI_VM}
+    Switch to gui-vm as ghaf
     Log in, unlock and verify

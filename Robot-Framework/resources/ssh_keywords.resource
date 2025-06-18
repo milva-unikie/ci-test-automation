@@ -10,6 +10,10 @@ Library             Process
 Library             String
 Library             ../lib/output_parser.py
 
+*** Variables ***
+
+${GUI_VM_GHAF_SSH}     ${EMPTY}
+${GUI_VM_USER_SSH}     ${EMPTY}
 
 *** Keywords ***
 
@@ -686,3 +690,23 @@ Detect first boot
 Create test user
     Log To Console      Creating test user
     Execute Command     systemctl start setup-test-user.service  sudo=True  sudo_password=${password}
+
+Switch to gui-vm as ghaf
+    [Documentation]   Switches the ssh connection to the gui-vm using the user account
+    ${status}  ${connection}   Run Keyword And Ignore Error    Switch Connection   ${GUI_VM_GHAF_SSH}
+    IF   $status=='FAIL'
+        ${GUI_VM_GHAF_SSH}   Connect to VM       ${GUI_VM}
+        Set Global Variable    ${GUI_VM_GHAF_SSH}
+    ELSE
+        Log To Console    Switched to gui-vm as ghaf
+    END
+
+Switch to gui-vm as user
+    [Documentation]   Switches the ssh connection to the gui-vm using the ghaf user
+    ${status}  ${connection}   Run Keyword And Ignore Error    Switch Connection   ${GUI_VM_USER_SSH}
+    IF   $status=='FAIL'
+        ${GUI_VM_USER_SSH}   Connect to VM       ${GUI_VM}  ${USER_LOGIN}  ${USER_PASSWORD}
+        Set Global Variable    ${GUI_VM_USER_SSH}
+    ELSE
+        Log To Console    Switched to gui-vm as user
+    END

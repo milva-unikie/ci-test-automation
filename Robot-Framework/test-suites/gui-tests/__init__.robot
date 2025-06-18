@@ -8,7 +8,7 @@ Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/connection_keywords.resource
 Library             ../../lib/GuiTesting.py   ${OUTPUT_DIR}/outputs/gui-temp/
-Test Timeout        10 minutes
+Test Timeout        5 minutes
 Suite Setup         GUI Tests Setup
 Suite Teardown      GUI Tests Teardown
 
@@ -18,7 +18,7 @@ Suite Teardown      GUI Tests Teardown
 GUI Tests Setup
     Initialize Variables, Connect And Start Logging
     IF  "Lenovo" in "${DEVICE}" or "Dell" in "${DEVICE}"
-        Connect to VM       ${GUI_VM}
+        Switch to gui-vm as ghaf
         Set compositor
         Save most common icons and paths to icons
         Create test user

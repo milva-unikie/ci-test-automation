@@ -9,8 +9,7 @@ Resource            ../../config/variables.robot
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/gui_keywords.resource
 Library             ../../lib/GuiTesting.py   ${OUTPUT_DIR}/outputs/gui-temp/
-Test Setup          GUI Apps Test Setup
-Test Teardown       GUI Apps Test Teardown
+Suite Setup         GUI Apps Suite Setup
 
 
 *** Variables ***
@@ -121,19 +120,14 @@ Start and close Firefox via GUI on Orin AGX
 
 *** Keywords ***
 
-GUI Apps Test Setup
+GUI Apps Suite Setup
     IF  "Lenovo" in "${DEVICE}" or "Dell" in "${DEVICE}"
         Connect to netvm
-        Connect to VM   ${GUI_VM}
+        Switch to gui-vm as ghaf
     ELSE
         Connect
     END
     Start ydotoold
-
-GUI Apps Test Teardown
-    Connect to VM   ${GUI_VM}
-    Move cursor to corner
-    Close All Connections
 
 Start app via GUI on LenovoX1
     [Documentation]    Start Application via GUI test automation and verify related process started
@@ -142,7 +136,6 @@ Start app via GUI on LenovoX1
     ...                ${display_name}=""
     ...                ${launch_icon}=icon.png
     ...                ${exact_match}=false
-    Connect to VM   ${GUI_VM}
     Check if ssh is ready on vm    ${app-vm}
 
     IF  $COMPOSITOR == 'cosmic'
@@ -159,7 +152,7 @@ Start app via GUI on LenovoX1
     Connect to VM       ${app-vm}
     Check that the application was started    ${app}  10  ${exact_match}
 
-    [Teardown]    Run Keywords    Connect to VM     ${GUI_VM}
+    [Teardown]    Run Keywords    Switch to gui-vm as ghaf
     ...           AND             Move cursor to corner
 
 Open app menu
@@ -185,7 +178,7 @@ Close app via GUI on LenovoX1
     Connect to netvm
     Connect to VM                             ${app-vm}
     Check that the application was started    ${app}  exact_match=${exact_match}
-    Connect to VM                             ${GUI_VM}
+    Switch to gui-vm as ghaf
     Log To Console                            Going to click the close button of the application window
     Locate and click                          ${close_button}  0.8  iterations=${iterations}
     Connect to VM                             ${app-vm}
@@ -195,7 +188,7 @@ Close app via GUI on LenovoX1
         # If this window is closed the actual browser window still opens.
         # So need to prepare to close another window in chrome test case.
         IF  '${status}' != 'True'
-            Connect to VM       ${GUI_VM}
+            Switch to gui-vm as ghaf
             Locate and click    ${close_button}  0.8  5
             Connect to VM       ${app-vm}
             ${status}           Run Keyword And Return Status  Check that the application is not running  ${app}  5  ${exact_match}
@@ -205,7 +198,8 @@ Close app via GUI on LenovoX1
         FAIL  Failed to close the application
     END
     # In case closing the app via GUI failed
-    [Teardown]      Run Keywords   Connect to VM   ${app-vm}   AND   Kill process   @{APP_PIDS}
+    [Teardown]     Run Keywords   Connect to VM   ${app-vm}   AND   Kill process   @{APP_PIDS}
+    ...            AND   Switch to gui-vm as ghaf   AND   Move cursor to corner
 
 Start app via GUI on Orin AGX
     [Documentation]    Start Application via GUI test automation and verify related process started
