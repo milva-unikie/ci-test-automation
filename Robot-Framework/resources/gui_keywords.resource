@@ -60,6 +60,10 @@ Log out and verify
         RETURN
     END
     IF  ${disable_dnd}   Set do not disturb state   false
+
+    ${lock}       Check if locked
+    IF  ${lock}   Unlock
+    
     ${logout_status}      Check if logged out    1
     IF  not ${logout_status}
         Log out via GUI
