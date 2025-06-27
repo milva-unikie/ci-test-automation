@@ -3,19 +3,19 @@
 
 *** Settings ***
 Documentation       Tests that are run in every VM
-Force Tags          vms
+Force Tags          vms  bat  regression  lenovo-x1  dell-7330  fmo
 Resource            ../../__framework__.resource
 Resource            ../../resources/ssh_keywords.resource
-Suite Setup         Connect to netvm
+Suite Setup         VM Suite Setup
 Suite Teardown      Close All Connections
 
 *** Test Cases ***
 
 Check internet connection in every VM
     [Documentation]    Pings google from every vm.
-    [Tags]             bat  regression  SP-T257  lenovo-x1  dell-7330
+    [Tags]             SP-T257
     ${failed_vms}=    Create List
-    FOR  ${vm}  IN  @{VMS}
+    FOR  ${vm}  IN  @{VM_LIST}
         Connect to VM    ${vm}
         ${output}=       Execute Command    ping -c1 google.com
         Log              ${output}
@@ -30,9 +30,9 @@ Check internet connection in every VM
 
 Check systemctl status in every VM
     [Documentation]    Check that systemctl status is running in every vm.
-    [Tags]             bat  regression  SP-T98-2  lenovo-x1  dell-7330
+    [Tags]             SP-T98-2
     ${failed_vms}=    Create List
-    FOR  ${vm}  IN  @{VMS}
+    FOR  ${vm}  IN  @{VM_LIST}
         Connect to VM    ${vm}
         ${status}=       Run Keyword And Ignore Error   Verify Systemctl status
         Log              ${status}
@@ -45,3 +45,14 @@ Check systemctl status in every VM
     # This test case has been added to collect information about failed services.
     # If no service is routinely failing it can be changed from Skip to Fail.
     IF  ${failed_vms} != []    Skip    VMs with non-running systemctl status: ${failed_vms}
+
+
+*** Keywords ***
+
+VM Suite Setup
+    Connect to netvm
+    Connect to ghaf host
+    ${output}       Execute Command    microvm -l
+    @{VM_LIST}      Extract VM names   ${output}
+    Should Not Be Empty   ${VM_LIST}   VM list is empty
+    Set Suite Variable    ${VM_LIST}
