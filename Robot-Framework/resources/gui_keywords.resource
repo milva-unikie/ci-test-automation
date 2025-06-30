@@ -9,6 +9,7 @@ Documentation       Keywords for gui tests. Note: These keywords assume the conn
 Resource            ../config/variables.robot
 Library             ../lib/GuiTesting.py    ${OUTPUT_DIR}/outputs/gui-temp/
 Library             Collections
+Library             SSHLibrary
 
 
 *** Variables ***

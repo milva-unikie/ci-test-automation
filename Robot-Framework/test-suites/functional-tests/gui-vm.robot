@@ -4,9 +4,9 @@
 *** Settings ***
 Documentation       Testing Gui-vm
 Force Tags          gui-vm   regression   lenovo-x1   dell-7330
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Test Setup          Gui-vm Test Setup
 Test Teardown       Gui-vm Test Teardown
 

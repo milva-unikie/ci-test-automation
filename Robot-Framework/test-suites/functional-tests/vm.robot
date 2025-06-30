@@ -4,8 +4,8 @@
 *** Settings ***
 Documentation       Tests that are run in every VM
 Force Tags          vms
-Resource            ../../__framework__.resource
 Resource            ../../resources/ssh_keywords.resource
+Library             Collections
 Suite Setup         Connect to netvm
 Suite Teardown      Close All Connections
 

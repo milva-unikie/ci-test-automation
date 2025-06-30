@@ -4,7 +4,6 @@
 *** Settings ***
 Documentation       Common system tests on host
 Force Tags          host  bat  regression  pre-merge
-Resource            ../../__framework__.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/serial_keywords.resource
 Library             ../../lib/output_parser.py

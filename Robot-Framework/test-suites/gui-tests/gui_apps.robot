@@ -4,10 +4,10 @@
 *** Settings ***
 Documentation       Testing launching applications via GUI
 Force Tags          gui   gui-apps
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/gui_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Library             ../../lib/GuiTesting.py   ${OUTPUT_DIR}/outputs/gui-temp/
 
 

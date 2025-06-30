@@ -3,8 +3,8 @@
 
 *** Settings ***
 Documentation       Performance tests
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
+Resource            ../../resources/ssh_keywords.resource
 Suite Setup         Set Variables   ${DEVICE}
 Suite Teardown      Close All Connections
 

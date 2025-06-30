@@ -4,7 +4,6 @@
 *** Settings ***
 Documentation       Tests for input-related GUI functionality
 Force Tags          gui
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/gui_keywords.resource
 
 *** Test Cases ***

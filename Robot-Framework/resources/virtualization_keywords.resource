@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 *** Settings ***
-Library             SSHLibrary
 Resource            ../config/variables.robot
-Library             BuiltIn
+Library             SSHLibrary
 Library             String
 
 

@@ -3,8 +3,9 @@
 
 *** Settings ***
 Resource            ../config/variables.robot
-Resource            ../resources/gui_keywords.resource
 Resource            ../resources/connection_keywords.resource
+Resource            ../resources/gui_keywords.resource
+Resource            ../resources/ssh_keywords.resource
 Library             ../lib/output_parser.py
 
 
