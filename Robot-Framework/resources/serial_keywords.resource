@@ -4,9 +4,8 @@
 *** Settings ***
 Library             SerialLibrary    encoding=ascii
 Resource            ../config/variables.robot
-Library             BuiltIn
-Library             String
 Library             AdvancedLogging
+Library             String
 Library             ../lib/output_parser.py
 Library             ../lib/KMTronicLibrary.py   ${RELAY_SERIAL_PORT}
 

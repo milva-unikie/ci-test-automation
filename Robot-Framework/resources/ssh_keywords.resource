@@ -2,11 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 *** Settings ***
-Library             SSHLibrary
 Resource            ../config/variables.robot
-Library             BuiltIn
-Library             String
 Library             Process
+Library             SSHLibrary
 Library             String
 Library             ../lib/output_parser.py
 

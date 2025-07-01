@@ -4,9 +4,9 @@
 *** Settings ***
 Documentation       Tests for input-related GUI functionality
 Force Tags          gui  gui-input
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/gui_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Library             Collections
 Library             ../../lib/output_parser.py
 

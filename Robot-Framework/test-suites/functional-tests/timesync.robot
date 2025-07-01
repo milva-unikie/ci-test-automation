@@ -3,9 +3,9 @@
 
 *** Settings ***
 Documentation       Testing time synchronization
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
 Resource            ../../resources/connection_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Library             ../../lib/TimeLibrary.py
 Suite Teardown      Close All Connections
 

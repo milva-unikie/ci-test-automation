@@ -4,12 +4,10 @@
 *** Settings ***
 Documentation       Testing audio application
 Force Tags          audio   bat  regression  pre-merge
-Resource            ../../__framework__.resource
-Resource            ../../resources/serial_keywords.resource
-Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/connection_keywords.resource
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
+Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
+Library             DateTime
 Test Setup          Connect to netvm
 Test Teardown       Close All Connections
 Test Timeout        3 minutes

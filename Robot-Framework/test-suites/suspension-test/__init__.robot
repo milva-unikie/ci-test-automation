@@ -3,8 +3,7 @@
 
 *** Settings ***
 Documentation       Suspension test
-Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
+Resource            ../../resources/common_keywords.resource
 Suite Setup         Set Variables   ${DEVICE}
 Suite Teardown      Close All Connections

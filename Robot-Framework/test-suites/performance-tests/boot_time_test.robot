@@ -4,12 +4,12 @@
 *** Settings ***
 Documentation       Testing target device bootup time.
 Force Tags          boot_time_test   performance
-Resource            ../../resources/serial_keywords.resource
+Resource            ../../config/variables.robot
 Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/device_control.resource
 Resource            ../../resources/performance_keywords.resource
-Resource            ../../config/variables.robot
+Resource            ../../resources/serial_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Variables           ../../lib/performance_thresholds.py
 Library             ../../lib/PerformanceDataProcessing.py  ${DEVICE}  ${BUILD_ID}  ${COMMIT_HASH}  ${JOB}
 ...                 ${PERF_DATA_DIR}  ${CONFIG_PATH}  ${PLOT_DIR}  ${PERF_LOW_LIMIT}

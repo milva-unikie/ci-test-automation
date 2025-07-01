@@ -6,7 +6,6 @@ Documentation       Testing logging
 Force Tags          bat  regression   logging  lenovo-x1   dell-7330
 Resource            ../../config/variables.robot
 Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/connection_keywords.resource
 Library             DateTime
 Suite Setup         Connect to netvm
 Suite Teardown      Close All Connections

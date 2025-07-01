@@ -4,10 +4,10 @@
 *** Settings ***
 Documentation       Testing Network VM
 Force Tags          netvm
+Resource            ../../config/variables.robot
+Resource            ../../resources/connection_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/virtualization_keywords.resource
-Resource            ../../resources/connection_keywords.resource
-Resource            ../../config/variables.robot
 Suite Teardown      Close All Connections
 
 

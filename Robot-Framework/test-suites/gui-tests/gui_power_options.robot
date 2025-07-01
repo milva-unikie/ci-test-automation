@@ -4,11 +4,11 @@
 *** Settings ***
 Documentation       Testing taskbar power widget options
 Force Tags          gui   gui-power-menu
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../config/variables.robot
-Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/power_meas_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Library             ../../lib/SwitchbotLibrary.py  ${SWITCH_TOKEN}  ${SWITCH_SECRET}
 Test Setup          GUI Power Test Setup
 
@@ -40,7 +40,7 @@ GUI Suspend and wake up
         FAIL                      Device failed to suspend.
     END
     Log To Console                Letting the device stay suspended for 30 sec
-    BuiltIn.Sleep                 30
+    Sleep                         30
     Log To Console                Waking the device up by pressing the power button for 1 sec
     Press Button                  ${SWITCH_BOT}-ON
     Check If Device Is Up

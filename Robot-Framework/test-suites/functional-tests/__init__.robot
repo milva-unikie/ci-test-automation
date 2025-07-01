@@ -3,11 +3,7 @@
 
 *** Settings ***
 Documentation       Functional tests
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/connection_keywords.resource
-Resource            ../../resources/gui_keywords.resource
-Library             OperatingSystem
 Test Timeout        10 minutes
 Suite Setup         Functional tests setup
 Suite Teardown      Functional tests teardown
