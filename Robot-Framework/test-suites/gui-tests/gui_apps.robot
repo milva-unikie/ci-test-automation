@@ -18,55 +18,55 @@ Library             ../../lib/GuiTesting.py   ${OUTPUT_DIR}/outputs/gui-temp/
 
 *** Test Cases ***
 
-Start and close Google Chrome via GUI on LenovoX1
+Start and close Google Chrome via GUI on laptop
     [Documentation]   Start Google Chrome via GUI test automation and verify related process started
     ...               Close Google Chrome via GUI test automation and verify related process stopped
     [Tags]            SP-T41-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${CHROME_VM}  chrome  display_name=Chrome
-    Close app via GUI on LenovoX1   ${CHROME_VM}  google-chrome  ./window-close-neg.png   2
+    Start app via GUI on laptop   ${CHROME_VM}  chrome  display_name=Chrome
+    Close app via GUI on laptop   ${CHROME_VM}  google-chrome  ./window-close-neg.png   2
     [Teardown]        Run Keyword If Test Failed     Skip   "Known issue SSRCSP-6716: Chrome does not have top bar"
 
-Start and close PDF Viewer via GUI on LenovoX1
+Start and close PDF Viewer via GUI on laptop
     [Documentation]   Start PDF Viewer via GUI test automation and verify related process started
     ...               Close PDF Viewer via GUI test automation and verify related process stopped
     [Tags]            SP-T70  lenovo-x1
-    Start app via GUI on LenovoX1   ${ZATHURA_VM}  zathura   display_name=PDF
-    Close app via GUI on LenovoX1   ${ZATHURA_VM}  zathura  ./window-close.png
+    Start app via GUI on laptop   ${ZATHURA_VM}  zathura   display_name=PDF
+    Close app via GUI on laptop   ${ZATHURA_VM}  zathura  ./window-close.png
 
-Start and close Sticky Notes via GUI on LenovoX1
+Start and close Sticky Notes via GUI on laptop
     [Documentation]   Start Sticky Notes via GUI test automation and verify related process started
     ...               Close Sticky Notes via GUI test automation and verify related process stopped
     [Tags]            SP-T201-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${GUI_VM}  sticky-wrapped  display_name=Sticky
-    Close app via GUI on LenovoX1   ${GUI_VM}  sticky-wrapped  ./window-close-neg.png
+    Start app via GUI on laptop   ${GUI_VM}  sticky-wrapped  display_name=Sticky
+    Close app via GUI on laptop   ${GUI_VM}  sticky-wrapped  ./window-close-neg.png
 
-Start and close Calculator via GUI on LenovoX1
+Start and close Calculator via GUI on laptop
     [Documentation]   Start Calculator via GUI test automation and verify related process started
     ...               Close Calculator via GUI test automation and verify related process stopped
     [Tags]            SP-T202-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${GUI_VM}  gnome-calculator  display_name=Calculator
-    Close app via GUI on LenovoX1   ${GUI_VM}  gnome-calculator  ./window-close-neg.png
+    Start app via GUI on laptop   ${GUI_VM}  gnome-calculator  display_name=Calculator
+    Close app via GUI on laptop   ${GUI_VM}  gnome-calculator  ./window-close-neg.png
 
-Start and close Bluetooth Settings via GUI on LenovoX1
+Start and close Bluetooth Settings via GUI on laptop
     [Documentation]   Start Bluetooth Settings via GUI test automation and verify related process started
     ...               Close Bluetooth Settings via GUI test automation and verify related process stopped
     [Tags]            SP-T204-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${GUI_VM}  blueman-manager-wrapped-wrapped  display_name=Bluetooth
-    Close app via GUI on LenovoX1   ${GUI_VM}  blueman-manager-wrapped-wrapped  ./window-close.png
+    Start app via GUI on laptop   ${GUI_VM}  blueman-manager-wrapped-wrapped  display_name=Bluetooth
+    Close app via GUI on laptop   ${GUI_VM}  blueman-manager-wrapped-wrapped  ./window-close.png
 
-Start and close Ghaf Control Panel via GUI on LenovoX1
+Start and close Ghaf Control Panel via GUI on laptop
     [Documentation]   Start Ghaf Control Panel via GUI test automation and verify related process started
     ...               Close Ghaf Control Panel via GUI test automation and verify related process stopped
     [Tags]            SP-T205-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${GUI_VM}  ctrl-panel  display_name=Control
-    Close app via GUI on LenovoX1   ${GUI_VM}  ctrl-panel  ./window-close-neg.png
+    Start app via GUI on laptop   ${GUI_VM}  ctrl-panel  display_name=Control
+    Close app via GUI on laptop   ${GUI_VM}  ctrl-panel  ./window-close-neg.png
     
-Start and close COSMIC Files via GUI on LenovoX1
+Start and close COSMIC Files via GUI on laptop
     [Documentation]   Start COSMIC Files via GUI test automation and verify related process started
     ...               Close COSMIC Files via GUI test automation and verify related process stopped
     [Tags]            SP-T206-2  lenovo-x1
-    Start app via GUI on LenovoX1   ${GUI_VM}  cosmic-files  display_name=Files  exact_match=true
-    Close app via GUI on LenovoX1   ${GUI_VM}  cosmic-files  ./window-close-neg.png  exact_match=true
+    Start app via GUI on laptop   ${GUI_VM}  cosmic-files  display_name=Files  exact_match=true
+    Close app via GUI on laptop   ${GUI_VM}  cosmic-files  ./window-close-neg.png  exact_match=true
 
 # GUI tests don't currently work on Orin (keywords expect that gui-vm is available)
 Start and close Firefox via GUI on Orin AGX
@@ -80,7 +80,7 @@ Start and close Firefox via GUI on Orin AGX
 
 *** Keywords ***
 
-Start app via GUI on LenovoX1
+Start app via GUI on laptop
     [Documentation]    Start Application via GUI test automation and verify related process started
     [Arguments]        ${app-vm}
     ...                ${app}
@@ -111,7 +111,7 @@ Open app menu
         Locate and click  ${APP_MENU_LAUNCHER}  0.95  5
     END
 
-Close app via GUI on LenovoX1 
+Close app via GUI on laptop 
     [Documentation]    Close Application via GUI test automation and verify related process stopped
     [Arguments]        ${app-vm}
     ...                ${app}

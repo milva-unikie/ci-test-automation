@@ -159,7 +159,7 @@ Wake up device
 
 Suspension setup
 
-    Reboot LenovoX1
+    Reboot Laptop
     Check If Device Is Up
     IF    ${IS_AVAILABLE} == False
         FAIL    The device did not start

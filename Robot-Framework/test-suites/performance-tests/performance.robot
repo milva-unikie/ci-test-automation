@@ -189,7 +189,7 @@ Sysbench test in NetVM
     ${stats_dict}           Evaluate      dict(${statistics_cpu}, **${statistics_mem_rd}, **${statistics_mem_wr})
     Determine Test Status   ${stats_dict}
 
-Sysbench test in VMs on LenovoX1
+Sysbench test in VMs on laptop
     [Documentation]      Run CPU and Memory benchmark using Sysbench in Virtual Machines
     ...                  for 1 thread and MULTIPLE threads if there are more than 1 thread in VM.
     [Tags]               SP-T61-9   lenovo-x1   dell-7330
@@ -269,9 +269,9 @@ Perf-Bench test
 
 *** Keywords ***
 
-LenovoX1 Setup
-    [Documentation]    Reboot LenovoX1
-    Reboot LenovoX1
+Laptop Setup
+    [Documentation]    Reboot Laptop
+    Reboot Laptop
     ${port_22_is_available}     Check if ssh is ready on device   timeout=180
     IF  ${port_22_is_available} == False
         FAIL    Failed because port 22 of device was not available, tests can not be run.

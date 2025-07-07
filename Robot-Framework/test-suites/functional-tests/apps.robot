@@ -27,7 +27,7 @@ Start Firefox
     Check that the application was started    firefox
     [Teardown]  Kill Process And Log journalctl
 
-Start Chrome on LenovoX1
+Start Chrome on laptop
     [Documentation]   Start Chrome in dedicated VM and verify process started
     [Tags]            bat  regression   pre-merge   SP-T92   lenovo-x1   dell-7330
     Verify service status  range=15  service=microvm@chrome-vm.service  expected_status=active  expected_state=running
@@ -39,7 +39,7 @@ Start Chrome on LenovoX1
     Check that the application was started    chrome
     [Teardown]  Kill Process And Log journalctl
 
-Start Zathura on LenovoX1
+Start Zathura on laptop
     [Documentation]   Start Zathura in dedicated VM and verify process started
     [Tags]            bat  regression  pre-merge   SP-T105   lenovo-x1   dell-7330
     Connect to netvm
@@ -50,7 +50,7 @@ Start Zathura on LenovoX1
     Check that the application was started    zathura
     [Teardown]  Kill Process And Log journalctl
 
-Start Gala on LenovoX1
+Start Gala on laptop
     [Documentation]   Start Gala in dedicated VM and verify process started
     [Tags]            bat  regression  SP-T104   lenovo-x1   dell-7330
     Connect to netvm
@@ -63,7 +63,7 @@ Start Gala on LenovoX1
     ...         Kill Process And Log journalctl    AND
     ...         Run Keyword If Test Failed     Skip    "Known issue: SSRCSP-6434"
 
-Start Element on LenovoX1
+Start Element on laptop
     [Documentation]   Start Element in dedicated VM and verify process started
     [Tags]            bat  regression  SP-T52   lenovo-x1   dell-7330
     Connect to netvm
@@ -74,7 +74,7 @@ Start Element on LenovoX1
     Check that the application was started    element
     [Teardown]  Kill Process And Log journalctl
 
-Start Slack on LenovoX1
+Start Slack on laptop
     [Documentation]   Start Slack in dedicated VM and verify process started
     [Tags]            bat  regression  SP-T181   lenovo-x1   dell-7330
     Connect to netvm

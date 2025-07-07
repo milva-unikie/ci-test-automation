@@ -16,7 +16,7 @@ Prepare Test Environment
     Log versions
     Run journalctl recording
 
-    IF  "Lenovo" in "${DEVICE}" or "Dell" in "${DEVICE}"
+    IF  Device is laptop
         Switch to vm    gui-vm
         Save most common icons and paths to icons
         Create test user
@@ -28,7 +28,7 @@ Clean Up Test Environment
     [Arguments]   ${disable_dnd}=False
     Connect to ghaf host
     Log journalctl
-    IF  "Lenovo" in "${DEVICE}" or "Dell" in "${DEVICE}"
+    IF  Device is laptop
         Switch to vm    gui-vm
         Start ydotoold
         Log out and verify   ${disable_dnd}
@@ -151,4 +151,11 @@ Check variable availability
         RETURN  ${True}
     ELSE
         RETURN  ${False}
+    END
+
+Device is laptop
+    IF   "Lenovo" in "${DEVICE}" or "Dell" in "${DEVICE}"
+        RETURN    True
+    ELSE
+        RETURN    False
     END

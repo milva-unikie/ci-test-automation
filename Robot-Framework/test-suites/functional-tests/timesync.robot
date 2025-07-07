@@ -103,7 +103,7 @@ Check time was changed
 
 Compare local and universal time
     [Documentation]   Universal time should be UTC,
-    ...               Local time should be Asia/Dubai time zone for LenovoX1 and UTC for others
+    ...               Local time should be Asia/Dubai time zone for laptops and UTC for others
     [Arguments]       ${timezone}=UTC
     ${output}         Execute Command    timedatectl -a
     ${local_time}  ${universal_time}  ${rtc_time}  ${device_time_zone}  ${is_synchronized}    Parse time info  ${output}
