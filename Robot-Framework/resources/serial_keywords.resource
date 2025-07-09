@@ -2,13 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 *** Settings ***
-Library             SerialLibrary    encoding=ascii
-Resource            ../config/variables.robot
-Library             BuiltIn
-Library             String
-Library             AdvancedLogging
-Library             ../lib/output_parser.py
 Library             ../lib/KMTronicLibrary.py   ${RELAY_SERIAL_PORT}
+Library             ../lib/output_parser.py
+Library             AdvancedLogging
+Library             SerialLibrary    encoding=ascii
+Library             String
 
 *** Keywords ***
 Open Serial Port

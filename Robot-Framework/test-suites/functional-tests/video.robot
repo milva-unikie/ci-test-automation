@@ -4,12 +4,11 @@
 *** Settings ***
 Documentation       Testing camera application
 Force Tags          bat  regression   video  lenovo-x1   dell-7330
-Resource            ../../__framework__.resource
-Resource            ../../resources/serial_keywords.resource
-Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/connection_keywords.resource
+
+Library             Collections
+Library             OperatingSystem
 Resource            ../../resources/ssh_keywords.resource
-Resource            ../../config/variables.robot
+
 Test Setup          Connect to netvm
 Test Teardown       Close All Connections
 Test Timeout        2 minutes
