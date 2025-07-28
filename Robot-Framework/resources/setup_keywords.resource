@@ -64,3 +64,5 @@ Log versions
     Log To Console      Ghaf version: ${ghaf_version}
     ${nixos_version}    Execute Command   nixos-version
     Log To Console      Nixos version: ${nixos_version}
+    ${device_id}        Execute Command   cat /persist/common/device-id
+    Log To Console      Device ID: ${device_id}
