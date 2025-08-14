@@ -357,12 +357,12 @@ Press Key(s)
 Change to gray wallpaper
     [Setup]           Switch to vm    gui-vm  user=${USER_LOGIN}
     Log To Console    Changing to gray wallpaper
-    Put File          ../test-files/background.config   .
-    Execute Command   mv background.config .config/cosmic/com.system76.CosmicBackground/v1/all
+    Put File          ../test-files/background.config   /home/${USER_LOGIN}
+    Execute Command   mv /home/${USER_LOGIN}/background.config /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all
     [Teardown]        Switch to vm    gui-vm
 
 Restore default wallpaper
     [Setup]           Switch to vm    gui-vm  user=${USER_LOGIN}
     Log To Console    Changing back to default wallpaper
-    Remove file       ~/.config/cosmic/com.system76.CosmicBackground/v1/all
+    Remove file       /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all
     [Teardown]        Switch to vm    gui-vm
