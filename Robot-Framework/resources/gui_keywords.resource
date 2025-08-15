@@ -15,7 +15,6 @@ Resource            ../resources/ssh_keywords.resource
 
 *** Variables ***
 ${APP_MENU_LAUNCHER}   ./launcher.png
-${LOCK_ICON}           ./lock.png
 ${DISABLE_LOGOUT}      ${EMPTY}
 ${GUI_TEMP_DIR}        ${OUTPUT_DIR}/outputs/gui-temp/
 
@@ -204,19 +203,10 @@ Verify desktop availability
     IF  $activity != "active"    FAIL    User-session did not activate, it is ${activity}
     IF  "Dell" in "${DEVICE}"    Sleep   5
 
-    # For debugging, check gui-vm systemctl status before trying to take a cosmic-screenshot in case it gets stuck
-    Run Keyword And Ignore Error   Verify Systemctl status   range=1
-    Run Keyword And Ignore Error   Verify Systemctl status   range=1   user=True
+    Change to gray wallpaper
 
-    Log To Console         Verifying login by trying to detect the launcher icon
-    # This is a workaround for launcher icon missing sometimes. If launcher icon can't be found tries to search
-    # for the power menu icon. Gui-vm user log is saved to help debugging.
-    ${status}   ${output}   Run Keyword And Ignore Error   Locate on screen  image  ${APP_MENU_LAUNCHER}  0.95  10
-    IF   $status == 'FAIL'
-        Get gui-vm user journalctl log
-        Log To Console    Could not find launcher icon, checking for power menu icon
-        Locate on screen  image  ./power.png  0.95  5
-    END
+    Log To Console     Verifying login by trying to detect the "Applications" text
+    Locate on screen   text   Applications
 
 Move cursor
     Log To Console    Moving cursor to random location
@@ -271,7 +261,7 @@ Check if locked
     # Press tab once to deselect the password field in case it was active. This helps with image recognition.
     Press Key(s)   TAB
     IF  not ${logout_status}
-        ${status}   ${output}      Run Keyword And Ignore Error   Locate on screen  image  ${LOCK_ICON}  0.95  1  debug_screenshot=False
+        ${status}   ${output}      Run Keyword And Ignore Error   Locate on screen  text  Password:  iterations=1  debug_screenshot=False
         IF  '${status}' == 'PASS'
             Log To Console    Screen is locked
             RETURN    ${True}
@@ -282,8 +272,9 @@ Check if locked
 
 Unlock
     [Documentation]    Unlock the screen be typing password
-    # Make sure that password field is active by clicking it
-    Locate and click   image  ${LOCK_ICON}   0.95  5
+    # Press tab once to deselect the password field in case it was active. This helps with the image recognition.
+    Press Key(s)   TAB
+    Locate and click   text  Password:  iterations=1
     Log To Console     Typing password to unlock
     Type string and press enter  ${USER_PASSWORD}  confidential=True
 
@@ -365,12 +356,13 @@ Press Key(s)
 Change to gray wallpaper
     [Setup]           Switch to vm    gui-vm  user=${USER_LOGIN}
     Log To Console    Changing to gray wallpaper
-    Put File          ../test-files/background.config   .
-    Execute Command   mv background.config .config/cosmic/com.system76.CosmicBackground/v1/all
+    Put File          ../test-files/background.config   /home/${USER_LOGIN}
+    ${output}   ${rc}   Execute Command   mv /home/${USER_LOGIN}/background.config /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all   return_rc=True
+    Should Be Equal As Integers     ${rc}   0
     [Teardown]        Switch to vm    gui-vm
 
 Restore default wallpaper
     [Setup]           Switch to vm    gui-vm  user=${USER_LOGIN}
     Log To Console    Changing back to default wallpaper
-    Remove file       ~/.config/cosmic/com.system76.CosmicBackground/v1/all
+    Remove file       /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all
     [Teardown]        Switch to vm    gui-vm

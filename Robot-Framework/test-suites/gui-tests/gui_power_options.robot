@@ -63,7 +63,7 @@ GUI Suspend and wake up
 GUI Lock and Unlock
     [Documentation]   Lock the screen via GUI power menu lock icon and check that the screen is locked.
     ...               Unlock lock screen by typing the password and check that desktop is available.
-    [Tags]            lenovo-x1   SP-T208-3   SP-T208-4   lock
+    [Tags]            lenovo-x1   SP-T208-3   SP-T208-4   lock  dell-7330
     Select power menu option   text=Lock
     ${lock}           Check if locked
     IF  not ${lock}   FAIL    Failed to lock the screen
