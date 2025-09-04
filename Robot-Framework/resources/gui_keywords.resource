@@ -17,7 +17,7 @@ Resource            ../resources/ssh_keywords.resource
 ${APP_MENU_LAUNCHER}   ./launcher.png
 ${LOCK_ICON}           ./lock.png
 ${DISABLE_LOGOUT}      ${EMPTY}
-${GUI_TEMP_DIR}        ${OUTPUT_DIR}/outputs/gui-temp/
+${GUI_TEMP_DIR}        ${OUTPUT_DIR}/outputs/gui-temp
 ${YDOTOOL_SOCKET}      /tmp/.ydotool_socket
 
 
@@ -37,14 +37,17 @@ Log in, unlock and verify
     # This is a workaround for a cosmic-greeter bug https://github.com/pop-os/cosmic-greeter/issues/135.
     # If the laptop did not login on the first attempt tries to press Tab to select the password field
     # and then attempts to log in again.
-    ${status}   ${output}   Run Keyword And Ignore Error   Verify desktop availability
+    ${status}   ${output}   Run Keyword And Ignore Error   Verify session activated
     IF   $status == 'FAIL'
         Log To Console    There was maybe a bug with the cosmic-greeter, let's try logging in again
         Log To Console    Pressing Tab to activate the password field
         Press Key(s)      TAB
         Log in via GUI
-        Verify desktop availability
+        Verify session activated
     END
+
+    Change to gray wallpaper
+    Verify desktop availability
 
     Stop swayidle
     IF  ${enable_dnd}      Set do not disturb state   true
@@ -52,6 +55,7 @@ Log in, unlock and verify
 Log out and verify
     [Documentation]   Log out. Verify that session was logged out.
     [Arguments]       ${disable_dnd}=True
+    Restore default wallpaper
     # Allow disabling logout in case of running test automation locally from ghaf-host.
     # This prevents terminal from being shutdown and allows test run to finish.
     IF  $DISABLE_LOGOUT == 'true'
@@ -60,13 +64,12 @@ Log out and verify
     END
     IF  ${disable_dnd}   Set do not disturb state   false
     ${logout_status}      Check if logged out    1
-    IF  not ${logout_status}
-        ${lock}       Check if locked
-        IF  ${lock}   Unlock
-        Log out via GUI
-        ${logout_status}  Check if logged out
-        IF  not ${logout_status}    FAIL  Failed to log out.
-    END
+    IF  ${logout_status}   RETURN
+    ${lock}       Check if locked
+    IF  ${lock}   Unlock
+    Log out via GUI
+    ${logout_status}  Check if logged out
+    IF  not ${logout_status}    FAIL  Failed to log out.
 
 Log in via GUI
     [Documentation]   Log in by typing password
@@ -129,10 +132,10 @@ Locate on screen
         ${result}=         Run Keyword And Ignore Error  Execute Command  ${screenshot_cmd}  return_stdout=True  return_rc=True  timeout=5
         Log                ${result}
         IF  "${result}[1][1]" == "0"
-            SSHLibrary.Get File  ${result[1][0]}  ${GUI_TEMP_DIR}screenshot.png
+            SSHLibrary.Get File  ${result[1][0]}  ${GUI_TEMP_DIR}/screenshot.png
             IF  $type=="image"
                 Log To Console    Locating image ${searched_item} on ${result[1][0]}
-                ${pass_status}    ${coordinates}  Run Keyword And Ignore Error  Locate image  ${GUI_TEMP_DIR}${searched_item}   ${confidence}
+                ${pass_status}    ${coordinates}  Run Keyword And Ignore Error  Locate image  ${GUI_TEMP_DIR}/${searched_item}   ${confidence}
             ELSE IF  $type=="text"
                 Log To Console    Locating text ${searched_item} on ${result[1][0]}
                 ${pass_status}    ${coordinates}  Run Keyword And Ignore Error  Locate text  ${searched_item}
@@ -173,9 +176,8 @@ Move cursor to corner
     Log To Console    Moving cursor to corner from blocking further image detection
     Run ydotool command   mousemove --absolute -x 50 -y 50
 
-Verify desktop availability
-    [Documentation]    Wait for the login and check that launcher icon is available on desktop
-
+Verify session activated
+    [Documentation]    Wait for the user session to activate after login
     ${activity}        Wait for user session to be active
 
     # Give extra time if the service is still activating
@@ -187,19 +189,9 @@ Verify desktop availability
     IF  $activity != "active"    FAIL    User-session did not activate, it is ${activity}
     IF  "Dell" in "${DEVICE}"    Sleep   5
 
-    # For debugging, check gui-vm systemctl status before trying to take a cosmic-screenshot in case it gets stuck
-    Run Keyword And Ignore Error   Verify Systemctl status   range=1
-    Run Keyword And Ignore Error   Verify Systemctl status   range=1   user=True
-
-    Log To Console         Verifying login by trying to detect the launcher icon
-    # This is a workaround for launcher icon missing sometimes. If launcher icon can't be found tries to search
-    # for the power menu icon. Gui-vm user log is saved to help debugging.
-    ${status}   ${output}   Run Keyword And Ignore Error   Locate on screen  image  ${APP_MENU_LAUNCHER}  0.95  10
-    IF   $status == 'FAIL'
-        Get gui-vm user journalctl log
-        Log To Console    Could not find launcher icon, checking for power menu icon
-        Locate on screen  image  ./power.png  0.95  5
-    END
+Verify desktop availability
+    Log To Console     Verifying login by trying to detect the "Applications" text
+    Locate on screen   text   Applications
 
 Move cursor
     Log To Console    Moving cursor to random location
@@ -241,8 +233,8 @@ Wait for user session to be active
 Get icon
     [Documentation]    Copy icon svg file to test agent machine. Crop and convert the svg file to png.
     [Arguments]        ${path}   ${icon_name}   ${crop}=0   ${background}=none   ${output_filename}=icon.png
-    SSHLibrary.Get File  ${path}/${icon_name}   ${GUI_TEMP_DIR}icon.svg
-    Convert app icon  ${crop}   ${background}   input_file=${GUI_TEMP_DIR}icon.svg  output_file=${GUI_TEMP_DIR}${output_filename}
+    SSHLibrary.Get File  ${path}/${icon_name}   ${GUI_TEMP_DIR}/icon.svg
+    Convert app icon  ${crop}   ${background}   input_file=${GUI_TEMP_DIR}/icon.svg  output_file=${GUI_TEMP_DIR}/${output_filename}
 
 Check if locked
     [Documentation]    Check if the screen lock is active
@@ -308,7 +300,7 @@ Switch keyboard layout
 
 Timestamp screenshot
     ${current_time}  DateTime.Get Current Date  result_format=%Y%m%d_%H%M%S
-    Run Process      sh  -c  cp ${GUI_TEMP_DIR}screenshot.png ${GUI_TEMP_DIR}screenshot_${current_time}.png  shell=true
+    Run Process      sh  -c  cp ${GUI_TEMP_DIR}/screenshot.png ${GUI_TEMP_DIR}/screenshot_${current_time}.png  shell=true
 
 Press Key(s)
     [Arguments]        ${key_combination}   ${sudo}=False
@@ -334,12 +326,16 @@ Run ydotool command
 
 Change to gray wallpaper
     Log To Console    Changing to gray wallpaper
-    Put File          ../test-files/background.config   .
-    Execute Command   mv background.config .config/cosmic/com.system76.CosmicBackground/v1/all
+    Put File          ../test-files/background.config   /home/${USER_LOGIN}
+    FOR   ${i}   IN RANGE   15
+        ${output}   ${rc}   Execute Command   mv /home/${USER_LOGIN}/background.config /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all   return_rc=True
+        IF   ${rc} == 0     RETURN
+    END
+    FAIL    Could not change to gray wallpaper
 
 Restore default wallpaper
     Log To Console    Changing back to default wallpaper
-    Remove file       ~/.config/cosmic/com.system76.CosmicBackground/v1/all
+    Remove file       /home/${USER_LOGIN}/.config/cosmic/com.system76.CosmicBackground/v1/all
 
 Start screen recording
     [Setup]          Kill screen recording
@@ -367,7 +363,7 @@ Stop screen recording
     IF  $test_status=='FAIL'
         Log To Console        Saving video file
         ${name}               Replace String   ${test_name}   ${SPACE}   _
-        SSHLibrary.Get File   /home/${USER_LOGIN}/Videos/${video_file}   ${GUI_TEMP_DIR}${name}.mp4
+        SSHLibrary.Get File   /home/${USER_LOGIN}/Videos/${video_file}   ${GUI_TEMP_DIR}/${name}.mp4
     END
     Execute Command   rm /home/${USER_LOGIN}/Videos/${video_file}
     [Teardown]        Kill screen recording

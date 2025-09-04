@@ -33,10 +33,10 @@ class GuiTesting:
 
         # Loop through results to find matching text
         for i, word in enumerate(data['text']):
-            if word.strip().lower() == text.lower():
+            if text.lower() in word.strip().lower():
                 x, y, w, h = (data[key][i] for key in ['left', 'top', 'width', 'height'])
                 center = (x + w // 2, y + h // 2)
-                logging.info(f"Found '{text}' at {center}")
+                logging.info(f"Found '{text}' inside '{word}' at {center}")
                 image_center_in_mouse_coordinates = self.convert_resolution(center)
                 logging.info(image_center_in_mouse_coordinates)
                 return image_center_in_mouse_coordinates
