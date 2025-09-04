@@ -18,7 +18,7 @@ Prepare Test Environment
         Switch to vm    ${GUI_VM}
         Create test user
         IF  ${login}
-            Save gui icons and icon path
+            Save login icons
             Login to laptop   ${enable_dnd}
         END
     END
@@ -91,19 +91,11 @@ Stop ydotoold
     Log To Console    Stopping ydotool daemon
     Execute Command   pkill ydotoold  sudo=True  sudo_password=${PASSWORD}
 
-Save gui icons and icon path
-    [Documentation]         Save the icons that are used in multiple test cases
-    ...                     Save path to icons
-    Log To Console          Saving commonly used test icons
-    ${ICONS}                Execute Command   find $(echo $XDG_DATA_DIRS | tr ':' ' ') -type d -name "icons" 2>/dev/null
-    Set Global Variable     ${ICONS}
-    Get icon                ${ICONS}/hicolor/scalable/apps  com.system76.CosmicAppLibrary.svg  crop=0  background=black  output_filename=launcher.png
-    Get icon                ${ICONS}/Papirus/24x24/symbolic/actions  window-close-symbolic.svg  crop=0  background=white  output_filename=window-close.png
-    Negate app icon         ${GUI_TEMP_DIR}/window-close.png  ${GUI_TEMP_DIR}/window-close-neg.png
-    Get icon                ${ICONS}/Cosmic/scalable/actions  system-search-symbolic.svg  crop=0  background=white  output_filename=search.png
-    Negate app icon         ${GUI_TEMP_DIR}/search.png  ${GUI_TEMP_DIR}/search-neg.png
-    Get icon                ${ICONS}/Papirus/24x24/actions  system-shutdown.svg  crop=0  background=black  output_filename=power.png
-    Get icon                ${ICONS}/Cosmic/scalable/actions  system-lock-screen-symbolic.svg  background=black  output_filename=lock.png
+Save login icons
+    [Documentation]   Save the icons that are needed for login
+    Log To Console    Saving login icons
+    ${icon_path}      Execute Command   find $(echo $XDG_DATA_DIRS | tr ':' ' ') -type d -name "icons" 2>/dev/null
+    Get icon          ${icon_path}/Cosmic/scalable/actions  system-lock-screen-symbolic.svg  background=black  output_filename=lock.png
 
 Login to laptop
     [Documentation]   Start ydotool and login
@@ -112,3 +104,4 @@ Login to laptop
     Start ydotoold
     Switch to vm   ${GUI_VM}  user=${USER_LOGIN}
     Log in, unlock and verify   ${enable_dnd}
+
