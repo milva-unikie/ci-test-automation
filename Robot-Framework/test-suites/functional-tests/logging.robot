@@ -14,7 +14,6 @@ Suite Teardown      Close All Connections
 
 
 *** Variables ***
-${NETVM_SSH}          ${EMPTY}
 ${GRAFANA_LOGS}       https://loki.ghaflogs.vedenemo.dev
 
 

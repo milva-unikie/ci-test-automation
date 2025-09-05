@@ -30,7 +30,7 @@ Automatic suspension
     Check screen brightness  ${max_brightness}
 
     Start power measurement       ${BUILD_ID}   timeout=1500
-    Connect
+    Connect to netvm
     Switch to vm    gui-vm   user=${USER_LOGIN}
     Set start timestamp
 
@@ -49,7 +49,7 @@ Automatic suspension
     Check that device is suspended
     Wait     300
     Wake up device
-    Connect
+    Connect to netvm
     Generate power plot           ${BUILD_ID}   ${TEST NAME}
     Stop recording power
     Switch to vm    gui-vm   user=${USER_LOGIN}

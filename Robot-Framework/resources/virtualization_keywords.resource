@@ -11,7 +11,7 @@ Library             String
 Verify microvm PCI device passthrough
     [Documentation]     Verify that proper PCI devices have been passed through to the VM
     [Arguments]    ${vmname}
-    Connect to VM if not already connected   ${vmname}
+    Switch to vm   ${vmname}
     @{pciids}=    Get list of PCI IDs
     Connect to ghaf host
     @{pcipassthrus}=    Get microvm PCI passthrough list    vmname=${vmname}

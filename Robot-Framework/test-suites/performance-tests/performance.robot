@@ -227,7 +227,7 @@ Sysbench test in VMs
             ${output}       Execute Command      /tmp/sysbench_test ${threads_n}  sudo=True  sudo_password=${PASSWORD}
             Run Keyword If    ${threads_n} > 1   Save sysbench results   ${vm}
             Save sysbench results   ${vm}   _1thread
-            Switch Connection    ${netvm_ssh}
+            Switch Connection    ${NETVM_SSH}
         END
     END
 

@@ -20,7 +20,7 @@ ${DISABLE_LOGOUT}     ${EMPTY}
 Functional tests setup
     [Timeout]    5 minutes
     Prepare Test Environment
-    Switch Connection    ${CONNECTION}
+    Connect to netvm
 
 Functional tests teardown
     [Timeout]    5 minutes

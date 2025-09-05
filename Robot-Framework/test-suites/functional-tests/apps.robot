@@ -22,7 +22,7 @@ Suite Setup         Connect to netvm
 Start Chrome
     [Documentation]   Start Chrome in dedicated VM and verify process started
     [Tags]            bat  regression   pre-merge   SP-T92
-    [Setup]           Run Keywords    Switch Connection    ${CONNECTION}    AND
+    [Setup]           Run Keywords    Connect to ghaf host    AND
     ...               Verify service status  range=15  service=microvm@chrome-vm.service
     Switch to vm           gui-vm  user=${USER_LOGIN}
     Start XDG application  'Google Chrome'

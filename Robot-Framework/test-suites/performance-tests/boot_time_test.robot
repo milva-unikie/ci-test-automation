@@ -79,7 +79,7 @@ Measure Time To Ping
     Log To Console            Start checking ping response
     ${ping_end_time}          Set Variable  False
     WHILE  not $ping_response   limit=${PING_TIMEOUT} seconds
-        ${ping_response}      Ping Host  ${DEVICE_IP_ADDRESS}  1
+        ${ping_response}      Ping Device  timeout=1
         ${ping_end_time}      IF  $ping_response  DateTime.Get Current Date  result_format=epoch
     END
     IF  not $ping_end_time

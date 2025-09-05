@@ -41,7 +41,7 @@ Reboot Laptop
 
 Soft Reboot Device
     [Documentation]  Reboot device from command line
-    ${device_is_available}   Ping Host   ${DEVICE_IP_ADDRESS}
+    ${device_is_available}   Ping Device
     IF  ${device_is_available}
         Connect to ghaf host
         ${output}  Execute Command  reboot  sudo=True  sudo_password=${password}
