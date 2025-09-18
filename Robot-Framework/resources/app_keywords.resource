@@ -9,6 +9,29 @@ Resource            ../resources/ssh_keywords.resource
 
 *** Keywords ***
 
+Start application in VM
+    [Arguments]    ${app_name}   ${vm_name}   ${process_name}   ${exact_match}=false
+    Check that appVM is running   ${vm_name}
+    Switch to vm   ${GUI_VM}  user=${USER_LOGIN}
+    Start XDG application   ${app_name}
+    IF   '${vm_name}' != '${GUI_VM}'   Switch to vm   ${vm_name}
+    Check that the application was started    ${process_name}   exact_match=${exact_match}
+
+Check that appVM is running
+    [Arguments]    ${vm_name}
+    Switch to vm      ghaf-host
+    Verify service status   range=15  service=microvm@${vm_name}.service
+    ${pid}            Find pid by name     microvm@${vm_name}
+    ${runtime_str}    Execute Command      ps -o etimes= -p ${pid}[0]
+    ${runtime}        Convert To Integer   ${runtime_str}
+    # givc-services are not running right after the VM has started.
+    # This gives them time to start before app launch is tried.
+    IF    $runtime < 15
+        Log       ${vm_name} started ${runtime} seconds ago, waiting until it has been running for 15 seconds   console=True
+        ${wait}   Evaluate    max(0, 15 - ${runtime})
+        Sleep     ${wait}
+    END
+
 Start XDG application
     [Arguments]      ${app_name}
     Log To Console   ${\n}Starting ${app_name}
@@ -43,8 +66,7 @@ Check that the application is not running
     Log To Console    ${app_name} not running
 
 Launch Cosmic Term
-    Start XDG application   com.system76.CosmicTerm
-    Check that the application was started    cosmic-term  exact_match=true
+    Start application in VM   com.system76.CosmicTerm   ${GUI_VM}   cosmic-term   exact_match=true
 
 Log and remove app output
     [Documentation]    Specify the VM from which the app was started and the user (the owner of the file)
