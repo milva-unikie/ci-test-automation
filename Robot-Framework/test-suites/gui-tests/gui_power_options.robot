@@ -23,7 +23,7 @@ GUI Suspend and wake up
     ...               Check that the device is awake.
     ...               Logs device power consumption during the test
     ...               if power measurement tooling is set.
-    [Tags]            SP-T208-2   #lenovo-x1  The X1 in the lab gets stuck when a suspension is attempted. Needs further investigation.
+    [Tags]            SP-T208-2   lenovo-x1   darter-pro
     Start power measurement       ${BUILD_ID}   timeout=180
     Set start timestamp
     # Connect back to gui-vm after power measurement has been started
@@ -39,7 +39,7 @@ GUI Suspend and wake up
         FAIL                      Device failed to suspend.
     END
     Log To Console                Letting the device stay suspended for 30 sec
-    BuiltIn.Sleep                 30
+    Sleep                         30
     Log To Console                Waking the device up by pressing the power button for 1 sec
     Press Button                  ${SWITCH_BOT}-ON
     Check If Device Is Up
@@ -48,6 +48,8 @@ GUI Suspend and wake up
     ELSE
         Log To Console            Device successfully woke up after suspend
     END
+    # Screen wakeup requires a mouse move
+    Move Cursor
     Log To Console                Checking if the screen is in locked state after wake up
     ${lock}                       Check if locked
     IF  ${lock}
@@ -76,7 +78,7 @@ GUI Lock and Unlock
 GUI Reboot
     [Documentation]   Reboot the device via GUI power menu reboot icon.
     ...               Check that it shuts down. Check that it turns on and boots to login screen.
-    [Tags]            SP-T208-1  #lenovo-x1   The X1 in the lab gets stuck when a reboot is attempted. Needs further investigation.
+    [Tags]            SP-T208-1  darter-pro  lenovo-x1
     Select power menu option   index=5   confirmation=true
 
     ${device_not_available}       Run Keyword And Return Status  Wait Until Keyword Succeeds  15s  2s  Check If Ping Fails
@@ -92,10 +94,9 @@ GUI Reboot
         Log To Console            Device started
     END
     Sleep  30
-    Connect   iterations=10
     Start ydotoold
-    Switch to vm    gui-vm   user=${USER_LOGIN}
-    Log in, unlock and verify   enable_dnd=True
+    Switch to vm   gui-vm  user=${USER_LOGIN}
+    Log in, unlock and verify   ${enable_dnd}
 
 GUI Log out and log in
     [Documentation]   Logout via GUI power menu icon and verify logged out state.
@@ -116,10 +117,10 @@ GUI Power Test Setup
 Select power menu option
     [Documentation]    Open power menu by clicking the icon.
     ...                Search the correct text or navigate to index and click.
-    [Arguments]        ${text}=""   ${index}=0   ${confirmation}=false
+    [Arguments]        ${text}=${EMPTY}   ${index}=0   ${confirmation}=false
     Log To Console     Opening power menu
     Locate and click   image  ./power.png  0.95  5
-    IF  '$text != $EMPTY'
+    IF  '${text}' != '${EMPTY}'
         Locate and click   text   ${text}
     ELSE
         Tab and enter      tabs=${index}
