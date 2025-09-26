@@ -41,6 +41,7 @@ Check systemctl status in every VM
     # Add any known failing services here with the vm name and bug ticket number.
     # ...    vm|service-name|ticket-number
     ...    gui-vm|setup-ghaf-user.service|SSRCSP-7234
+    ...    gui-vm|plymouth-quit.service|SSRCSP-7306
 
     FOR  ${vm}  IN  @{VM_LIST}
         Switch to vm     ${vm}
