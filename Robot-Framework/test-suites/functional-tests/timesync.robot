@@ -28,7 +28,7 @@ Time synchronization
     ...                  - Ghaf-host is connected to net via Net-VM if adapter is used!.
     ...                  - In this test we expect adapter is not used -> Set Wi-Fi ON to enable net-vm to address net.
     [Tags]            bat  regression  SP-T97   nuc  orin-agx  orin-agx-64  orin-nx  riscv  lenovo-x1  darter-pro  dell-7330  fmo
-
+    # TODO: FIX THIS
     ${host}  Connect
     Check that time is correct  timezone=UTC
 

@@ -59,7 +59,7 @@ Test ballooning in VM
     ${timeout_deflate}=               Evaluate      int(${expected_mem_at_inflate} * 0.005)
     ${timeout_logging}=               Evaluate      int(${timeout_inflate} + ${timeout_deflate} + 20)
 
-    Connect to VM                     ${vm}     timeout=120
+    Switch to vm                      ${vm}     timeout=120
 
     Log                               Minimum expected total memory at inflate: ${expected_mem_at_inflate} MiB  console=True
     Log                               Maximum allowed total memory at inflate: ${max_mem_at_inflate} MiB  console=True

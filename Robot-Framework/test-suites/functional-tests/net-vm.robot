@@ -11,11 +11,6 @@ Resource            ../../resources/virtualization_keywords.resource
 Resource            ../../resources/wifi_keywords.resource
 
 
-*** Variables ***
-${NETVM_STATE}     ${EMPTY}
-${NETVM_SSH}       ${EMPTY}
-
-
 *** Test Cases ***
 
 Verify NetVM is started
@@ -66,7 +61,7 @@ NetVM stops and starts successfully
     [Tags]              # SP-T47  SP-T90   orin-agx  orin-agx-64
     [Setup]             Connect to ghaf host
     Restart NetVM
-    [Teardown]          Run Keywords  Start NetVM if dead   AND  Close All Connections
+    [Teardown]          Run Keywords  Start NetVM   AND  Close All Connections
 
 NetVM is wiped after restarting
     [Documentation]     Verify that created file will be removed after restarting VM
@@ -113,7 +108,6 @@ Stop NetVM
     Sleep    3
     ${status}  ${state}=    Verify service status  service=${netvm_service}  expected_status=inactive  expected_state=dead
     Verify service shutdown status   service=${netvm_service}
-    Set Global Variable     ${NETVM_STATE}   ${state}
     Log To Console          NetVM is ${state}
 
 Start NetVM
@@ -122,29 +116,8 @@ Start NetVM
     Log To Console          Going to start NetVM
     Execute Command         systemctl start ${netvm_service}  sudo=True  sudo_password=${PASSWORD}  timeout=120  output_during_execution=True
     ${status}  ${state}=    Verify service status  service=${netvm_service}  expected_status=active  expected_state=running
-    Set Global Variable     ${NETVM_STATE}   ${state}
     Log To Console          NetVM is ${state}
     Wait until NetVM service started
-
-Start NetVM if dead
-    [Documentation]     Teardown keyword. Check global variable ${NETVM_STATE} and start NetVM if it's stopped.
-    ...                 Pre-condition: requires active ssh connection to ghaf host.
-    Start NetVM
-
-Configure wifi via wpa_supplicant
-    [Arguments]         ${netvm_ssh}  ${SSID}  ${passw}  ${lenovo}=False
-    Switch Connection   ${netvm_ssh}
-    Log To Console      Configuring Wifi
-    Set Log Level       NONE
-    Execute Command     sh -c "wpa_passphrase ${SSID} ${passw} > /etc/wpa_supplicant.conf"   sudo=True    sudo_password=${PASSWORD}
-    Execute Command     systemctl restart wpa_supplicant.service   sudo=True    sudo_password=${PASSWORD}
-    Set Log Level       INFO
-
-Remove wpa_supplicant configuration
-    Switch Connection   ${netvm_ssh}
-    Log To Console      Removing Wifi configuration
-    Execute Command     rm /etc/wpa_supplicant.conf  sudo=True    sudo_password=${PASSWORD}
-    Execute Command     systemctl restart wpa_supplicant.service  sudo=True    sudo_password=${PASSWORD}
 
 Skip test if known failure
     [Documentation]    Elaborate it possible failure is due to some known reason.

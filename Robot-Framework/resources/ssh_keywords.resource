@@ -14,27 +14,27 @@ Resource            ../resources/common_keywords.resource
 
 *** Keywords ***
 
-Ping Host
-    [Arguments]        ${hostname}  ${timeout}=10
-    [Documentation]    Ping the given hostname once and return boolean result
-    ${ping_output}=    Run Process   ping ${hostname} -c 1 -W ${timeout}   shell=True
+Ping Device
+    [Arguments]        ${timeout}=10
+    [Documentation]    Ping the device once and return boolean result
+    ${ping_output}=    Run Process   ping ${DEVICE_IP_ADDRESS} -c 1 -W ${timeout}   shell=True
     ${ping_success}    Run Keyword And Return Status    Should Contain    ${ping_output.stdout}    1 received
     Return From Keyword    ${ping_success}
 
 Check If Ping Fails
-    [Documentation]  Check that ping is not getting response from host
+    [Documentation]  Check that ping is not getting response from the device
     ${result}  Run Process  ping  ${DEVICE_IP_ADDRESS}  -c1  timeout=1s
     Should Not Be Equal   ${result.rc}  ${0}
 
 Check Network Availability
     [Arguments]            ${host}  ${expected_result}=True  ${range}=5
     Log                    Checking network ${host} availability, expected: ${expected_result}  console=True
-    Set Global Variable    ${IS_AVAILABLE}   False
+    Set Variable           ${network_is_available}  False
     FOR   ${i}   IN RANGE  ${range}
         Write    ping ${host} -c 1
         TRY
             Read Until           1 received
-            Set Global Variable  ${IS_AVAILABLE}  True
+            Set Variable         ${network_is_available}  True
             Log   ${host} is available  console=True
             IF    ${expected_result} == True
                 BREAK
@@ -48,8 +48,8 @@ Check Network Availability
             END
         END
     END
-    IF    ${IS_AVAILABLE} != ${expected_result}
-        FAIL    Expected availability of ${host}: ${expected_result}, in fact: ${IS_AVAILABLE}
+    IF    ${network_is_available} != ${expected_result}
+        FAIL    Expected availability of ${host}: ${expected_result}, in fact: ${network_is_available}
     END
 
 Check If Device Is Up
@@ -57,7 +57,7 @@ Check If Device Is Up
     Set Global Variable    ${IS_AVAILABLE}       False
     ${start_time}=    Get Time	epoch
     FOR    ${i}    IN RANGE    ${range}
-        ${ping}=    Ping Host   ${DEVICE_IP_ADDRESS}
+        ${ping}=    Ping Device
         IF    ${ping}
             Log To Console    Ping ${DEVICE_IP_ADDRESS} successful
             BREAK
@@ -140,21 +140,16 @@ Connect
 
 Connect to ghaf host
     [Documentation]      Open SSH connection to Ghaf Host
-    ${connected}   Check ssh connection status   ghaf-host
+    ${connected}   Check if already connected   ghaf-host  ${LOGIN}
     IF  not ${connected}
-        ${connection}        Connect
-        Set Global Variable  ${NETVM_SSH}        ${connection}
-        Switch to vm         ghaf-host
+        Connect to netvm
+        Switch to vm       ghaf-host
     END
 
 Connect to netvm
     [Documentation]      Open ssh connection to net-vm
-    ${connected}   Check ssh connection status   net-vm
-    IF  not ${connected}
-        ${connection}   Connect
-        Set Global Variable  ${NETVM_SSH}    ${connection}
-        RETURN               ${NETVM_SSH}
-    END
+    ${connected}   Check if already connected   net-vm  ${LOGIN}
+    IF  not ${connected}   Connect
 
 Connect to VM
     [Documentation]      Connect to any VM or ghaf-host over internal virtual network
@@ -311,7 +306,7 @@ Wait until NetVM service started
     IF   ${status} == False    FAIL    NetVM is not ready after ${timeout}
 
 Save log
-    Connect
+    Connect to netvm
     ${output}     Execute Command   journalctl > jrnl.txt${\n}
     ${output}     Execute Command   cat jrnl.txt${\n}
     Log  ${output}
@@ -319,7 +314,7 @@ Save log
 
 Check if ssh is ready on vm
     [Arguments]    ${vm}  ${timeout}=30
-    ${already_connected}            Check ssh connection status     ${vm}
+    ${already_connected}            Check if already connected     ${vm}   ${LOGIN}
     IF  ${already_connected}
         RETURN
     END
@@ -381,23 +376,15 @@ Check if ssh is ready on device
 
     RETURN  ${is_ready}
 
-Check ssh connection status
-    [Documentation]    Check if there is already an active ssh connection to vm_name
-    [Arguments]        ${vm_name}
+Check if already connected
+    [Documentation]    Check if there is already an active ssh connection to vm with user
+    [Arguments]        ${vm}   ${user}
     ${status}   ${hostname}      Run Keyword And Ignore Error  Execute Command  hostname
-    IF  $vm_name in $hostname
+    ${status}   ${whoami}        Run Keyword And Ignore Error  Execute Command  whoami
+    IF  $vm == $hostname and $whoami == $user
         RETURN  ${True}
     ELSE
         RETURN  ${False}
-    END
-
-Connect to VM if not already connected
-    [Documentation]    Connect only if there is not already an active connection
-    [Arguments]        ${vm_name}
-    ${connected}   Check ssh connection status   ${vm_name}
-    IF  not ${connected}
-        Connect to netvm
-        Connect to VM   ${vm_name}
     END
 
 Switch to vm
@@ -433,17 +420,10 @@ Try to switch to active vm connection
     [Arguments]        ${ssh_index}    ${hostname}   ${user}
 
     ${connection_status}  ${previous_connection}   Run Keyword And Ignore Error    Switch Connection   ${ssh_index}
+    ${already_connected}  Check if already connected   ${hostname}   ${user}
 
-    ${status}   ${output_user}    Run Keyword And Ignore Error   Execute Command    whoami
-    Log    ${output_user}
-    ${user_status}    Run Keyword And Return Status    Should Be Equal    ${output_user}    ${user}
-
-    ${status}   ${output_host}    Run Keyword And Ignore Error   Execute Command    hostname
-    Log    ${output_host}
-    ${host_status}    Run Keyword And Return Status    Should Be Equal    ${output_host}    ${hostname}
-
-    IF   $connection_status=='FAIL' or not ${user_status} or not ${host_status}
-        RETURN   False
-    ELSE
+    IF   $connection_status=='PASS' and ${already_connected}
         RETURN   True
+    ELSE
+        RETURN   False
     END

@@ -320,7 +320,7 @@ Sysbench test in VMs
             ${output}       Execute Command      /tmp/sysbench_test ${threads_n}  sudo=True  sudo_password=${PASSWORD}
             Run Keyword If    ${threads_n} > 1   Save sysbench results   ${vm}
             Save sysbench results   ${vm}   _1thread
-            Switch Connection    ${netvm_ssh}
+            Switch Connection    ${NETVM_SSH}
         END
     END
 
@@ -384,7 +384,7 @@ Transfer Sysbench Test Script To NetVM
 Transfer Sysbench Test Script To VM
     [Arguments]        ${vm}    ${script_name}=sysbench_test
     IF  "${vm}" != "net-vm"
-        ${vm_fail}    ${result} =    Run Keyword And Ignore Error    Connect to VM    ${vm}
+        ${vm_fail}    ${result} =    Run Keyword And Ignore Error    Switch to vm     ${vm}
         Run Keyword If    '${vm_fail}' == 'FAIL'   Append To List	 ${FAILED_VMS}	  ${vm}
         Run Keyword If    '${vm_fail}' == 'FAIL'   Return From Keyword  ${vm_fail}
         Log               Successfully connected to ${vm}  console=True

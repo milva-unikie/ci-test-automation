@@ -79,7 +79,7 @@ Measure Time To Ping
     Log To Console            Start checking ping response
     ${ping_end_time}          Set Variable  False
     WHILE  not $ping_response   limit=${PING_TIMEOUT} seconds
-        ${ping_response}      Ping Host  ${DEVICE_IP_ADDRESS}  1
+        ${ping_response}      Ping Device  timeout=1
         ${ping_end_time}      IF  $ping_response  DateTime.Get Current Date  result_format=epoch
     END
     IF  not $ping_end_time
@@ -112,7 +112,7 @@ Get Boot times
     ${ping_response_seconds}    Measure Time To Ping    ${start_time_epoch}
     Sleep  30
     Connect to netvm
-    Connect to VM  ${GUI_VM}
+    Switch to vm   ${GUI_VM}
     ${time_to_desktop}      Check Time To Notification  ${testuser_line}   ${start_time_epoch}
     Log                     Boot time to login screen measured: ${time_to_desktop}   console=True
     &{final_results}        Create Dictionary

@@ -60,7 +60,7 @@ File sharing test
 Shares setup
     Set Suite Variable     ${path_in_vm}         /home/appuser/'Unsafe share'
     Set Suite Variable     ${file_name}          test.txt
-    Connect
+    Connect to netvm
 
 Remove the file in VM
     [Arguments]        ${file_name}    ${vm}
