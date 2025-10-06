@@ -11,6 +11,7 @@ Resource            ../../resources/serial_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 
 Suite Setup         Switch to vm   ghaf-host
+Test Teardown       Sleep    1
 
 
 *** Test Cases ***
