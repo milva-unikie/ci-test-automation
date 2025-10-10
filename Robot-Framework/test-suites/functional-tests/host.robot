@@ -24,7 +24,7 @@ Test ghaf version format
 Test nixos version format
     [Documentation]    Test getting Nixos version and verify its format:
     ...                Expected format: major.minor.yyyymmdd.commit_hash (name)
-    [Tags]             SP-T55  nuc  orin-agx  orin-agx-64  orin-nx  riscv  lenovo-x1  darter-pro  dell-7330  fmo  pre-merge
+    [Tags]             SP-T55  nuc  orin-agx  orin-agx-64  orin-nx  riscv  lenovo-x1  darter-pro  dell-7330  fmo
     Verify Nixos Version Format
 
 Check QSPI version
@@ -53,7 +53,6 @@ Check host systemctl status
 Check all VMs are running
     [Documentation]    Check that all VMs are running.
     [Tags]             SP-T68  lenovo-x1  darter-pro  dell-7330  fmo  pre-merge
-    [Setup]            Run Keywords   Close All Connections   AND   Switch to vm   ghaf-host
     ${output}   Execute Command    microvm -l
     @{vms}      Extract VM names   ${output}
     Should Not Be Empty   ${vms}  VM list is empty

@@ -23,5 +23,6 @@
 
 | DATE SET   | TEST CASE                             | TICKET / Additional Data.                                                             |
 | ---------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| 10.10.2025 | Test nixos version format             | Removed pre-merge tag to debug the issue with host connection.                        |
 | 03.09.2025 | Performance/network suite (AGX)       | SSRCSP-7160. Network-adapter usage had impact on results Needs further investigation. |
 | 03/2025    | Performance Network.robot - ‘orin-nx’ | SSRCSP-6372 - Works locally but problems when Jenkins used, fails all..               |
