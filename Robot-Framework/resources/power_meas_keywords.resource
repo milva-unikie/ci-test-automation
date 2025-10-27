@@ -5,6 +5,7 @@
 Library             ../lib/ParsePowerData.py    ${POWER_MEASUREMENT_DIR}    ${PLOT_DIR}
 Library             DateTime
 Library             SSHLibrary
+Resource            ../resources/app_keywords.resource
 Resource            ../resources/common_keywords.resource
 
 

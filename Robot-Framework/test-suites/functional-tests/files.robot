@@ -85,20 +85,13 @@ Open PDF from app-vm
 
 Open PDF
     [Arguments]      ${pdf_file}
-    ${output}        Execute Command    cat /run/current-system/sw/share/applications/ghaf-pdf-xdg.desktop  sudo=True  sudo_password=${PASSWORD}    return_stderr=True
-    ${path}          Get App Path From Desktop  ${output}[0]
-    ${xdgopen}       Get Substring      ${path}    0    -3
     Log To Console   Trying to open ${pdf_file}
-    Execute Command  echo ${PASSWORD} | sudo -S nohup sh -c '${xdgopen} ${pdf_file}' > /tmp/out.log 2>&1 &
+    Execute Command  echo ${PASSWORD} | sudo -S nohup sh -c 'xdg-open-ghaf pdf ${pdf_file}' > /tmp/out.log 2>&1 &
 
 Open Image
     [Arguments]      ${pic_file}
-    ${output}        Execute Command    cat /run/current-system/sw/share/applications/ghaf-image-xdg.desktop
-    Log              ${output}
-    ${path}          Get App Path From Desktop  ${output}
-    ${xdgopen}       Get Substring      ${path}    0    -3
     Log To Console   Trying to open ${pic_file}
-    Execute Command  nohup sh -c '${xdgopen} ${pic_file}' > /tmp/out.log 2>&1 &
+    Execute Command  nohup sh -c 'xdg-open-ghaf image ${pic_file}' > /tmp/out.log 2>&1 &
 
 Open text file
     [Arguments]      ${text_file}

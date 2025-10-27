@@ -402,8 +402,7 @@ Stop screen recording
     END
     Log To Console   Stopping screen recording
     Press key(s)     LEFTCTRL+LEFTSHIFT+LEFTALT+R
-    @{pid}           Find pid by name   gpu-screen-recorder
-    Kill process     @{pid}   sudo=False
+    Kill process by name   gpu-screen-recorder
     # Get the name of the last recording
     ${video_file}    Execute Command   ls /home/${USER_LOGIN}/Videos -Art | tail -n 1
     # Save the video file if the test failed

@@ -6,8 +6,9 @@ Documentation       Validates that individual VM failures are isolated and do no
 ...                 the availability, performance, or security of other VMs or the host system.
 Force Tags          security  regression  lenovo-x1  darter-pro  dell-7330
 
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/app_keywords.resource
+Resource            ../../resources/file_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 
 Suite Setup         Switch to vm   ${NET_VM}
 
@@ -22,10 +23,10 @@ Stopping one VM does not affect others
     ...                 that it doesn't affect the first VM and app running
     [Tags]              SP-T286
     [Template]          Stopping one VM does not affect another
-    ${BUSINESS_VM}  ${COMMS_VM}     Slack          slack
-    ${CHROME_VM}    ${ZATHURA_VM}   PDF Viewer     zathura
-    ${ZATHURA_VM}   ${BUSINESS_VM}  gala           gala
-    ${COMMS_VM}     ${CHROME_VM}    Google Chrome  chrome
+    ${BUSINESS_VM}  ${COMMS_VM}     Slack            slack
+    ${CHROME_VM}    ${ZATHURA_VM}   "PDF Viewer"     zathura
+    ${ZATHURA_VM}   ${BUSINESS_VM}  Gala             gala
+    ${COMMS_VM}     ${CHROME_VM}    "Google Chrome"  chrome
 
 
 *** Keywords ***
@@ -60,4 +61,4 @@ Start VM
     Execute Command         systemctl start microvm@${vm}.service  sudo=True  sudo_password=${PASSWORD}  timeout=120  output_during_execution=True
     ${state}  ${substate}   Verify service status  service=microvm@${vm}.service  expected_state=active  expected_substate=running
     Log                     ${vm} is ${substate}    console=True
-#    Check if ssh is ready on vm   ${vm}
+

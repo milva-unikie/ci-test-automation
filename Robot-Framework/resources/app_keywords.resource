@@ -17,7 +17,7 @@ Start application in VM
     [Arguments]    ${app_name}   ${vm_name}   ${process_name}   ${exact_match}=false
     Check that appVM is running   ${vm_name}
     Switch to vm   ${GUI_VM}  user=${USER_LOGIN}
-    Start XDG application   ${app_name}
+    Start application   ${app_name}
     IF   '${vm_name}' != '${GUI_VM}'   Switch to vm   ${vm_name}
     Check that the application was started    ${process_name}   exact_match=${exact_match}
 
@@ -28,13 +28,9 @@ Check that appVM is running
     # Wait until systemctl status is running (ignore error in case the status is degraded)
     ${status}   Run Keyword and Ignore Error    Verify Systemctl status
 
-Start XDG application
+Start application
     [Arguments]      ${app_name}
-    Log To Console   ${\n}Starting ${app_name}
-    ${app_name}      Check application name  ${app_name}
-    ${output}        Execute Command    cat /run/current-system/sw/share/applications/${app_name}.desktop
-    ${path}          Get App Path From Desktop  ${output}
-    Execute Command  nohup sh -c 'WAYLAND_DISPLAY=wayland-1 ${path}' > output.log 2>&1 &
+    Execute Command  nohup sh -c 'WAYLAND_DISPLAY=wayland-1 ghaf-open ${app_name}' > ${APP_OUTPUT_FILE} 2>&1 &
 
 Check that the application was started
     [Arguments]          ${app_name}  ${range}=2  ${exact_match}=false
@@ -76,7 +72,7 @@ Log app vm journalctl
     [Documentation]    Specify the VM where the App is actually running
     [Arguments]   ${vm}
     Switch to vm  ${vm}
-    ${output}     Execute Command    journalctl
+    ${output}     Execute Command    journalctl -b
     Log           ${output}
 
 Kill Process And Save Logs
@@ -95,20 +91,65 @@ Kill App in VM
     [Arguments]   ${vm}
     Kill Process And Save Logs    ${GUI_VM}    ${USER_LOGIN}    ${APP_OUTPUT_FILE}    ${vm}
 
-Get Falcon LLM Name
-    ${output}            Execute Command     cat '/run/current-system/sw/share/applications/Falcon AI.desktop'
-    ${line}              Get Lines Containing String  ${output}  Exec=
-    ${path}              Set Variable  ${line[5:]}
-    ${llm_name_raw}      Execute Command  cat ${path} | grep LLM_NAME | head -n 1
-    # LLM_NAME="falcon3:10b" -> falcon3:10b
-    ${tmp}               Fetch From Right  ${llm_name_raw}  =
-    ${LLM_NAME}          Set Variable  ${tmp[1:-1]}
-    Set Global Variable  ${LLM_NAME}
+Is process started
+    [Arguments]    ${pid}
+    ${rc}=      Execute Command    ps -p ${pid}   return_rc=True
+    ${status}=  Run Keyword And Return Status   Should Be Equal As Integers	 ${rc[1]}	0
+    RETURN      ${status}
 
-Check application name
-    [Documentation]  Check written format of application
-    [Arguments]  ${app_name}
-    ${app_name}  Strip String  ${app_name}  characters="'
-    ${output}    Execute Command    ls /run/current-system/sw/share/applications/
-    ${app}       Get Regexp Matches  ${output}  (?im)${app_name}
-    RETURN  '${app}[0]'
+Find pid by name
+    [Arguments]   ${proc_name}  ${exact_match}=false
+    Log To Console    Looking for pids of the process ${proc_name}
+    IF  $exact_match=='true'
+        ${output}=    Execute Command    sh -c 'ps aux | grep -E " ${proc_name}$" | grep -v grep'
+    ELSE
+        ${output}=    Execute Command    sh -c 'ps aux | grep "${proc_name}" | grep -v grep'
+    END
+    Log           ${output}
+    @{pids}=      Find Pid    ${output}  ${proc_name}
+    Log To Console    Found PIDs for process '${proc_name}':\n${pids}
+    RETURN        @{pids}
+
+Kill process
+    [Arguments]    @{pids}    ${sig}=9    ${sudo}=True
+    FOR   ${pid}  IN  @{pids}
+        IF  '${pid}' == '${EMPTY}'
+            BREAK
+        END
+        IF  $sudo == "True"
+            Execute Command    kill -${sig} ${pid}  sudo=True  sudo_password=${password}  timeout=15
+        ELSE
+            Execute Command    kill -${sig} ${pid}  timeout=15
+        END
+        FOR    ${i}    IN RANGE   5
+            ${ps_exists}=    Is Process Started    ${pid}
+            IF  ${ps_exists}
+                Sleep    0.5
+            ELSE
+                BREAK
+            END
+        END
+        IF  ${ps_exists}  FAIL  Process ${pid} haven't stopped
+        # Check if any of the original pids are still running
+        ${any_running} =    Set Variable    False
+        FOR    ${check_pid}  IN  @{pids}
+            ${ps_exists} =    Is Process Started    ${check_pid}
+            IF  ${ps_exists}
+                ${any_running} =    Set Variable    True
+                BREAK
+            END
+        END
+        IF  not ${any_running}
+            BREAK
+        END
+    END
+    Log To Console    Killed processes: @{pids}
+
+Kill process by name
+    [Arguments]     ${proc_name}   ${exact_match}=false   ${sudo}=False
+    ${pass_status}   ${output}    Run Keyword And Ignore Error   Check that the application was started   ${proc_name}   1
+    IF  $pass_status=='PASS'
+        Log To Console   ${proc_name} is running, killing the process
+        @{pid}           Find pid by name   ${proc_name}
+        Kill process     @{pid}   sudo=${sudo}
+    END

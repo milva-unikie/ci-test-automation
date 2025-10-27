@@ -17,6 +17,48 @@ Check variable availability
         RETURN  ${False}
     END
 
+Verify service status
+    [Documentation]   Check if service is running with given loop ${range}
+    [Arguments]       ${range}=45  ${service}=${EMPTY}   ${expected_state}=active   ${expected_substate}=running  ${expected_rc}=0
+    ${vmservice}      Run Keyword And Return Status  Should Contain  ${service}  microvm@
+    ${finished}       Set Variable  False
+
+    ${welcome_check}  Set Variable If  "Lenovo" in "${DEVICE}" or "Darter" in "${DEVICE}" or "Dell" in "${DEVICE}"    False    True
+
+    FOR    ${i}    IN RANGE    ${range}
+        ${output}  ${stderr}  ${rc}=   Execute Command  systemctl show ${service}  return_stderr=True  return_rc=True
+        Log           stdout: ${output}\nstderr: ${stderr}
+        Should Not Be Equal As Integers	    ${rc}	4   Stderr: "${stderr}", Return code
+        ${state}             Get Service State     ${output}
+        ${substate}          Get Service Substate  ${output}
+        ${state_status}      Run Keyword And Return Status    Should Be True	'${state}' == '${expected_state}'  Expected ${expected_state} but in fact ${state}
+        ${substate_status}   Run Keyword And Return Status    Should Be True	'${substate}' == '${expected_substate}'    Expected ${expected_substate} but in fact ${substate}
+
+        # 'Welcome to NixOS' is not got if 'non-vm service' or if service is expected to be inactive/dead.
+        IF  ${vmservice} and '${expected_substate}' == 'running' and ${state_status} and ${substate_status} and ${welcome_check}
+            ${logs}        Execute Command   journalctl -b -u ${service}
+            Log            ${logs}
+            ${finished}    Run Keyword And Return Status    Should Contain    ${logs}    Welcome to NixOS
+            IF  ${finished}
+                BREAK
+            END
+        ELSE IF  ${state_status} and ${substate_status}
+            ${finished}     Set Variable  True
+            BREAK
+        END
+        Sleep    1
+    END
+
+    IF  ${finished}
+        Log To Console  ${\n}systemctl status ${service}: ${state} (${substate})
+    ELSE
+        ${output}       Execute Command  journalctl -b -u ${service}
+        Log             ${output}
+        IF   ${welcome_check}   FAIL    systemctl status ${service}: ${state} (${substate}), expected: ${expected_state} (${expected_substate}), welcome check passed: ${finished}
+        FAIL            systemctl status ${service}: ${state} (${substate}), expected: ${expected_state} (${expected_substate})
+    END
+    RETURN    ${state}  ${substate}
+
 Verify Systemctl status
     [Arguments]    ${range}=60    ${user}=False
     [Documentation]    Check is systemctl running with given loop ${range}
