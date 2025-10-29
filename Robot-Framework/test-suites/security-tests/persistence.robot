@@ -25,7 +25,7 @@ ${EXPECTED_CAM_STATE}     block
 *** Test Cases ***
 
 Verify brightness persisted
-    [Tags]    SP-T326-1   lenovo-x1
+    [Tags]    SP-T326-1   lenovo-x1   darter-pro
     ${brightness}     Get screen brightness
     Should Be Equal   ${EXPECTED_BRIGHTNESS}  ${brightness}
 
@@ -77,9 +77,9 @@ Set values
     [Arguments]    ${type}
     Should Be True  '${type}' in ['ORIGINAL', 'EXPECTED']   Wrong type
     Run Keyword And Continue On Failure   Set brightness    ${${type}_BRIGHTNESS}
-    Run Keyword And Continue On Failure   Set volume        ${${type}_VOLUME_}
-    Run Keyword And Continue On Failure   Set timezone      ${${type}_TIMEZONE_}
-    Run Keyword And Continue On Failure   Set cam state     ${${type}_CAM_STATE_}
+    Run Keyword And Continue On Failure   Set volume        ${${type}_VOLUME}
+    Run Keyword And Continue On Failure   Set timezone      ${${type}_TIMEZONE}
+    Run Keyword And Continue On Failure   Set cam state     ${${type}_CAM_STATE}
 
 Set brightness
     [Documentation]   Set brightness to ${brightness_to_set}
@@ -90,6 +90,7 @@ Set brightness
     ${brightness}     Execute Command    /nix/store/${path}/bin/brightnessctl get
     Log To Console    Brightness is ${brightness}
     Should Be Equal   ${brightness_to_set}    ${brightness}
+    ${output}         Execute Command    systemctl stop systemd-backlight@*  sudo=True  sudo_password=${PASSWORD}
 
 Set volume
     [Documentation]   Set volume to ${volume_to_set}
