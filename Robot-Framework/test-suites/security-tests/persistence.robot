@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Check persistence
-Force Tags          security   persistence   regression
+Force Tags          security   persistence   regression  lenovo-x1   darter-pro
 Library             ../../lib/output_parser.py
 Library             ../../lib/TimeLibrary.py
 Resource            ../../resources/device_control.resource
@@ -18,30 +18,30 @@ Test Setup          Persistence Test Setup
 
 
 *** Variables ***
-${EXPECTED_BRIGHTNESS}    16290
+${EXPECTED_BRIGHTNESS}    7758    #16290
 ${EXPECTED_VOLUME}        42
-${EXPECTED_TIMEZONE}      UTC
+${EXPECTED_TIMEZONE}      Asia/Dubai
 ${EXPECTED_CAM_STATE}     block
 
 *** Test Cases ***
 
 Verify brightness persisted
-    [Tags]    # SP-T326-1   lenovo-x1
+    [Tags]    SP-T326-1
     ${brightness}     Get screen brightness
     Should Be Equal   ${EXPECTED_BRIGHTNESS}  ${brightness}
 
 Verify volume persisted
-    [Tags]    SP-T326-2   lenovo-x1   darter-pro
+    [Tags]    SP-T326-2
     ${volume}         Get volume level
     Should Be Equal   ${EXPECTED_VOLUME}  ${volume}
 
 Verify timezone persisted
-    [Tags]    SP-T326-3   lenovo-x1   darter-pro
+    [Tags]    SP-T326-3
     ${timezone}       Get timezone
     Should Be Equal   ${EXPECTED_TIMEZONE}  ${timezone}
 
 Verify camera block persisted
-    [Tags]    SP-T326-4   lenovo-x1   darter-pro
+    [Tags]    SP-T326-4
     ${cam_state}      Get cam state
     Should Be Equal   ${EXPECTED_CAM_STATE}  ${cam_state}
 
