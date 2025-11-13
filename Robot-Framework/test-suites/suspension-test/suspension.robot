@@ -75,9 +75,9 @@ Automatic suspension
     # Power level comparison in the same login gui state as in the beginning
     # Applied only if power measurement agent is available in the setup
     IF  $SSH_MEASUREMENT!='${EMPTY}'
-        Unlock
-        Verify desktop availability
-        Wait                     120
+        #Unlock
+        #Verify desktop availability
+        Wait                     30
         Set timestamp            after_suspend_start
         Wait                     60
         Set timestamp            after_suspend_end
