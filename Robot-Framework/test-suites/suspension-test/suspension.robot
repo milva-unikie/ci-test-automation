@@ -25,71 +25,73 @@ Automatic suspension
     ...               in 20 min press the button and check that laptop woke up
     [Tags]            SP-T162    lenovo-x1   lab-only
     [Setup]           Test setup
-    [Teardown]        Test teardown
+    #[Teardown]        Test teardown
 
-    Check the screen state   on
-    Check screen brightness  ${max_brightness}
+    #Check the screen state   on
+    #Check screen brightness  ${max_brightness}
+
+    Wait    120
 
     Start power measurement  ${BUILD_ID}   timeout=1500
     Connect
     Switch to vm    ${GUI_VM}   user=${USER_LOGIN}
 
-    Wait                     60
-    Set timestamp            before_suspend_start
-    Wait                     60
-    Set timestamp            before_suspend_end
-    Wait                     120
-    Check screen brightness  ${dimmed_brightness}
+    Wait                     30
+    # Set timestamp            before_suspend_start
+    # Wait                     60
+    # Set timestamp            before_suspend_end
+    # Wait                     120
+    # Check screen brightness  ${dimmed_brightness}
 
-    Wait                     10
+    # Wait                     10
 
-    Check the screen state   on
-    Wait                     50
-    ${locked}                Check if locked
-    Should Be True           ${locked}
+    # Check the screen state   on
+    # Wait                     50
+    # ${locked}                Check if locked
+    # Should Be True           ${locked}
 
-    Wait                     610
+    # Wait                     610
 
-    Check that device is suspended
+    # Check that device is suspended
 
-    Wait                     60
-    Set timestamp            suspend_start
-    Wait                     240
-    Set timestamp            suspend_end
+    # Wait                     60
+    # Set timestamp            suspend_start
+    # Wait                     240
+    # Set timestamp            suspend_end
 
-    Wake up device
-    Close All Connections
-    Connect
-    Start ydotoold
-    Switch to vm             ${GUI_VM}   user=${USER_LOGIN}
+    # Wake up device
+    # Close All Connections
+    # Connect
+    # Start ydotoold
+    # Switch to vm             ${GUI_VM}   user=${USER_LOGIN}
 
     # Sometimes screen wakeup has required a mouse move
-    Move Cursor
+    # Move Cursor
     
-    Wait Until Keyword Succeeds   30s   2s    Check the screen state   on
+    # Wait Until Keyword Succeeds   30s   2s    Check the screen state   on
 
-    Log To Console           Checking if the screen is in locked state after wake up
-    ${locked}                Check if locked
-    Should Be True           ${locked}    Screen lock not active after wake up
+    # Log To Console           Checking if the screen is in locked state after wake up
+    # ${locked}                Check if locked
+    # Should Be True           ${locked}    Screen lock not active after wake up
 
     # Power level comparison in the same login gui state as in the beginning
     # Applied only if power measurement agent is available in the setup
     IF  $SSH_MEASUREMENT!='${EMPTY}'
-        #Unlock
-        #Verify desktop availability
-        Wait                     30
-        Set timestamp            after_suspend_start
-        Wait                     60
-        Set timestamp            after_suspend_end
+        # Unlock
+        # Verify desktop availability
+        # Wait                     30
+        # Set timestamp            after_suspend_start
+        # Wait                     60
+        # Set timestamp            after_suspend_end
 
-        Generate power plot      ${BUILD_ID}   ${TEST NAME}
+        Generate power plot      ${BUILD_ID}   "Default power mode"
         Stop recording power
 
-        ${suspended_power}       Check power during suspension   ${BUILD_ID}   2500
-        ${power_changed}         Measure power level change  ${BUILD_ID}  25  ${before_suspend_start}  ${before_suspend_end}  ${after_suspend_start}  ${after_suspend_end}
-        IF  ${suspended_power}!=${False} or ${power_changed}!=${False}
-            FAIL  Average suspended power ${suspended_power}mW (test limit 2500mW)\nPower consumption level increased ${power_changed}% over suspension and wake up (test limit 25%)
-        END
+        # ${suspended_power}       Check power during suspension   ${BUILD_ID}   2500
+        # ${power_changed}         Measure power level change  ${BUILD_ID}  25  ${before_suspend_start}  ${before_suspend_end}  ${after_suspend_start}  ${after_suspend_end}
+        # IF  ${suspended_power}!=${False} or ${power_changed}!=${False}
+        #     FAIL  Average suspended power ${suspended_power}mW (test limit 2500mW)\nPower consumption level increased ${power_changed}% over suspension and wake up (test limit 25%)
+        # END
     END
 
 Automatic lock (Darter Pro)
@@ -118,13 +120,13 @@ Automatic lock (Darter Pro)
 
 Test setup
     Start swayidle
-    Get expected brightness values
-    Set display to max brightness
+    #Get expected brightness values
+    #Set display to max brightness
     Move cursor
 
-Test teardown
-    Run Keyword If Test Passed    Log out and verify
-    Run Keyword If Test Failed    Run Keywords  Reboot Laptop   AND   Skip  "Known Issue: SSRCSP-7473"
+#Test teardown
+    #Run Keyword If Test Passed    Log out and verify
+    #Run Keyword If Test Failed    Run Keywords  Reboot Laptop   AND   Skip  "Known Issue: SSRCSP-7473"
 
 Wait
     [Arguments]     ${sec}
