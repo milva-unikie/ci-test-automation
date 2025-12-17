@@ -60,12 +60,7 @@ Check Logs Are available
     [Arguments]      ${id}
     FOR  ${vm}  IN  @{VM_LIST}
         Set Log Level  NONE
-        # Logging from one VM sometimes stops during the run (SSRCSP-7612).
-        # To avoid failures in the pipelines the test checks for any logs during the last 10 minutes.
-        # 10 minutes should be enough to make sure that logs from previous run are not detected.
-        # When the bug is fixed the old version should be taken back into use.
-        #${out}         Run   logcli query --addr="${GRAFANA_LOGS}" --password="${PASSWORD}" --username="${LOGIN}" --since="3m" '{machine="${id}", host="${vm}"} |= `${TEST_LOG}`'
-        ${out}         Run   logcli query --addr="${GRAFANA_LOGS}" --password="${PASSWORD}" --username="${LOGIN}" --since="10m" '{machine="${id}", host="${vm}"}'
+        ${out}         Run   logcli query --addr="${GRAFANA_LOGS}" --password="${PASSWORD}" --username="${LOGIN}" --since="3m" '{machine="${id}", host="${vm}"} |= `${TEST_LOG}`'
         Set Log Level  INFO
         Log            ${out}
         ${lines}    Count lines    ${out}

@@ -16,7 +16,7 @@ Suite Teardown      Remove Wifi configuration  ${TEST_WIFI_SSID}
 
 Wifi password is not revealed in Grafana
     [Documentation]  Check that logs in Grafana don't contain wifi password
-    [Tags]           SP-T328
+    [Tags]           SP-T328  lab-only
     ${data_available}    ${logs}    Get logs by key words   ${TEST_WIFI_SSID}
     ${found}  ${logs}    Get logs by key words   ${TEST_WIFI_PSWD}
     Should Not Be True   ${found}
