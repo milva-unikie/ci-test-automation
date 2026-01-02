@@ -18,6 +18,9 @@ Get screen brightness
     ${output}         Search nix store   brightnessctl
     ${brightness}     Execute Command    ${output}/bin/brightnessctl get
     IF  ${log_brightness}    Log To Console    Brightness is ${brightness}
+    # For debugging, save some logs
+    ${output}   Execute Command   journalctl -u systemd-backlight*
+    Log   ${output}
     RETURN            ${brightness}
     [Teardown]   Switch to vm    ${GUI_VM}  user=${USER_LOGIN}
 
