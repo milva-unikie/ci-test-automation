@@ -63,6 +63,9 @@ Log versions
 Create test user
     [Setup]          Switch to vm    ${GUI_VM}
     Log To Console   Creating test user
+    Wait Until Keyword Succeeds    10s    2s   Complete user provisioning
+
+Complete user provisioning
     ${out}  ${err}  ${rc}   Execute Command   systemctl start user-provision-test.service    return_stderr=True  return_rc=True  sudo=True  sudo_password=${PASSWORD}
     Should Be Equal As Integers   ${rc}  0   ${err}
     ${out}            Execute Command    homectl
@@ -78,11 +81,13 @@ Start ydotoold
         Run Keyword And Ignore Error  Execute Command   /run/current-system/sw/bin/ydotoold --socket-path /tmp/.ydotool_socket  sudo=True  sudo_password=${PASSWORD}  timeout=3
         ${ydotoold_state}=    Execute Command    sh -c 'ps aux | grep ydotoold | grep -v grep'
         Should Not Be Empty  ${ydotoold_state}  failed to start ydotool daemon
+        Wait Until Keyword Succeeds    5s    1s   Check file exists    /tmp/.ydotool_socket
         # Allow all users to use Ydotool
         ${output}   Execute Command       chmod 666 /tmp/.ydotool_socket  return_stdout=True  return_rc=True   sudo=True  sudo_password=${PASSWORD}
         Log   ${output}
+        Log To Console    Ydotool daemon is running
     ELSE
-        Log To Console    Check: ydotool daemon running
+        Log To Console    Ydotool daemon is already running
     END
 
 Stop ydotoold
