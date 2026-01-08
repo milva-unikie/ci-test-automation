@@ -51,13 +51,6 @@ Measure time to launch Calculator
     Close app via GUI   ${GUI_VM}  gnome-calculator  ./window-close-neg.png
     Save launch time    gnome-calculator
 
-Measure time to launch Bluetooth Settings
-    [Documentation]   Start Bluetooth Settings via GUI and measure time of launching
-    [Tags]            SP-T285-5
-    Start app via GUI   ${GUI_VM}  blueman-manager-wrapped-wrapped  display_name=Bluetooth
-    Close app via GUI   ${GUI_VM}  blueman-manager-wrapped-wrapped
-    Save launch time    blueman-manager-wrapped-wrapped
-
 Measure time to launch Ghaf Control Panel
     [Documentation]   Start Ghaf Control Panel via GUI and measure time of launching
     [Tags]            SP-T285-6

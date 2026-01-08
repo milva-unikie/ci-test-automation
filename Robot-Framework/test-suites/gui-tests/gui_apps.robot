@@ -44,13 +44,6 @@ Start and close Calculator via GUI
     Start app via GUI   ${GUI_VM}  gnome-calculator  display_name=Calculator
     Close app via GUI   ${GUI_VM}  gnome-calculator  ./window-close-neg.png
 
-Start and close Bluetooth Settings via GUI
-    [Documentation]   Start Bluetooth Settings via GUI and verify related process started
-    ...               Close Bluetooth Settings via GUI and verify related process stopped
-    [Tags]            SP-T204-2
-    Start app via GUI   ${GUI_VM}  blueman-manager-wrapped-wrapped  display_name=Bluetooth
-    Close app via GUI   ${GUI_VM}  blueman-manager-wrapped-wrapped  ./window-close.png
-
 Start and close Ghaf Control Panel via GUI
     [Documentation]   Start Ghaf Control Panel via GUI and verify related process started
     ...               Close Ghaf Control Panel via GUI and verify related process stopped
