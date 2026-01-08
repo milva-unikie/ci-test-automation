@@ -72,6 +72,8 @@ Check Audio devices
         END
         ${sources}   Execute Command  pactl list sources
         ${sinks}     Execute Command  pactl list sinks
+        Log   ${sources}
+        Log   ${sinks}
         Run Keyword And Continue On Failure   Should Contain   ${sources}   Source   ${vm} does not have Sources
         Run Keyword And Continue On Failure   Should Contain   ${sinks}     Sink     ${vm} does not have Sinks
     END

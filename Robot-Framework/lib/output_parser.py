@@ -304,13 +304,13 @@ def get_cpu_thread_count(output):
 
     return threads_per_core * cores_per_socket
 
-def get_monitor_microphone_source(output):
+def parse_microphone_id(output, type):
     for line in output.splitlines():
-        if "Monitor" in line:
+        if type in line:
             match = re.match(r"(\d+)", line)
             if match:
                 return int(match.group(1))
-    raise ValueError("Monitor microphone source not found")
+    raise ValueError(f"{type} microphone id not found")
 
 def extract_mean_volume(output):
     match = re.search(r"mean_volume:\s*([-\d.]+)\s*dB", output)

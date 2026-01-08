@@ -28,8 +28,9 @@ Record Audio And Verify
     ELSE
         Switch to vm   ${vm}
     END
+    ${mic_id}    Get Microphone Id    Digital
     Log To Console         Recording audio file
-    ${output}              Execute Command   sh -c 'parecord -r /tmp/${audiofile} & sleep 5 && pkill parecord && chown ghaf:ghaf /tmp/${audiofile}'    sudo=${sudo}  sudo_password=${PASSWORD}    timeout=15
+    ${output}              Execute Command   sh -c 'parecord -r /tmp/${audiofile} -d ${mic_id} & sleep 5 && pkill parecord && chown ghaf:ghaf /tmp/${audiofile}'    sudo=${sudo}  sudo_password=${PASSWORD}    timeout=15
     SSHLibrary.Get File    /tmp/${audiofile}  ${AUDIO_DIR}/${audiofile}
     Check Audio Duration   ${AUDIO_DIR}/${audiofile}    ${expected_duration}
     IF   ${expected_duration} != 0
@@ -50,14 +51,12 @@ Play Audio And Verify
         Switch to vm   ${vm}  ${USER_LOGIN}
         ${sudo}        Set Variable   False
     END
-    ${pamixer}      Search nix store   pamixer
-    ${sources}      Execute Command    ${pamixer}/bin/pamixer --list-sources
-    Log             ${sources}
-    ${source_id}    Get Monitor Microphone Source    ${sources}
+
+    ${mic_id}    Get Microphone Id    Monitor
 
     Log To Console  Playing audio and recording it
     # Play sound and record it with mic simultaneously
-    Execute Command       sh -c 'paplay /tmp/${sample_file} & parecord -r /tmp/${record_file} -d ${source_id} & sleep 2.5 && sleep ${duration} && pkill parecord'  sudo=${sudo}  sudo_password=${PASSWORD}
+    Execute Command       sh -c 'paplay /tmp/${sample_file} & parecord -r /tmp/${record_file} -d ${mic_id} & sleep 2.5 && sleep ${duration} && pkill parecord'  sudo=${sudo}  sudo_password=${PASSWORD}
     SSHLibrary.Get File   /tmp/${record_file}    ${AUDIO_DIR}/${record_file}
 
     Check Audio Duration      ${AUDIO_DIR}/${record_file}    expected_duration=${duration}
@@ -113,6 +112,14 @@ Check Bitrate
     [Arguments]      ${audiofile}  ${expected_bitrate}
     ${bitrate}       Get Bitrate   ${audiofile}
     Should Be True   ${bitrate} > ${expected_bitrate}
+
+Get Microphone Id
+    [Arguments]   ${type}
+    ${pamixer}   Search nix store   pamixer
+    ${sources}   Execute Command    ${pamixer}/bin/pamixer --list-sources
+    Log          ${sources}
+    ${mic_id}    Parse Microphone Id    ${sources}  ${type}
+    RETURN   ${mic_id}
 
 Verify Video File
     [Documentation]  Verify that file size is not 0 and that video is not all black
