@@ -74,7 +74,6 @@ CPU resource isolation test
     # Overshoot the sysbench cpu thread number in the attacking VM although qemu will/should limit it to 4.
     Single vs Parallel CPU test       reference-vm=${BUSINESS_VM}   ref_threads=4   attack-vm=${CHROME_VM}   attack_threads=20
     [Teardown]              Run Keywords    Close All Connections
-    ...                     AND             Connect
     ...                     AND             Switch to vm   ${HOST}
 
 Memory Read One thread test
@@ -486,7 +485,6 @@ Teardown of Fileio Isolation Test
     Set default low limit
     Set Global Variable     ${PERF_LOW_LIMIT}   1
     Close All Connections
-    Connect
     Switch to vm   ${HOST}
 
 Performance Teardown

@@ -23,7 +23,7 @@ Suite Teardown      Close All Connections
 
 *** Variables ***
 ${PING_TIMEOUT}     120
-${SEARCH_TIMEOUT}   40
+${SEARCH_TIMEOUT}   60
 
 
 *** Test Cases ***
@@ -115,14 +115,12 @@ Get Boot times
     ${start_time_epoch}  DateTime.Get Current Date   result_format=epoch
     # For detecting timestamp of Login screen in cosmic desktop
     ${testuser_line}  Catenate  SEPARATOR=\n
-    ...  testuser_line=$(journalctl -b --output=short-iso | grep "testuser: changing state activating-for-acquire")
+    ...  testuser_line=$(journalctl -b --output=short-iso | grep "${USER_LOGIN}: changing state activating-for-acquire")
     ...  echo $testuser_line
 
     ${ping_response_seconds}    Measure Time To Ping    ${start_time_epoch}
-    Sleep  30
-    Connect
-    Connect to VM  ${GUI_VM}
-    ${time_to_desktop}      Check Time To Notification  ${testuser_line}   ${start_time_epoch}
+    Switch to vm           ${GUI_VM}
+    ${time_to_desktop}      Wait Until Keyword Succeeds   30s   2s   Check Time To Notification  ${testuser_line}   ${start_time_epoch}
     Log                     Boot time to login screen measured: ${time_to_desktop}   console=True
     &{final_results}        Create Dictionary
     Set To Dictionary       ${final_results}  time_to_desktop  ${time_to_desktop}

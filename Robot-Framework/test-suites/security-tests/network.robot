@@ -28,13 +28,13 @@ Try to connect with wrong password
     ${connection}       Open Connection    ${vm_name}    port=22    prompt=\$    timeout=30
     FOR    ${i}    IN RANGE     5
         TRY
-            ${status}  ${login_output}   Run Keyword And Ignore Error  Login with timeout  username=${user}  password=wrong  jumphost=${jumphost}
+            ${status}  ${login_output}   Run Keyword And Ignore Error  Login with timeout  expected_output=${vm_name}  username=${user}  password=wrong  jumphost=${jumphost}
         EXCEPT    Keyword timeout 30 seconds exceeded.
             BREAK
         END
     END
     TRY
-        Run Keyword And Ignore Error  Login with timeout  username=${user}  password=${pw}  jumphost=${jumphost}
+        Run Keyword And Ignore Error  Login with timeout  expected_output=${vm_name}  username=${user}  password=${pw}  jumphost=${jumphost}
     EXCEPT    Keyword timeout 30 seconds exceeded.
         Log   Failed to connect with correct password in 30 seconds.
     END

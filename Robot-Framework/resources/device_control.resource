@@ -51,8 +51,7 @@ Turn Laptop On and Connect
     ELSE
         Log To Console  The device started
     END
-    Sleep   30
-    Connect    iterations=10
+    Switch to vm    ${NET_VM}
 
 Soft Reboot Device
     [Documentation]  Reboot device from ${vm}
@@ -80,8 +79,7 @@ Verify Reboot and Connect
     ELSE
         Log To Console            Device started
     END
-    Sleep   30
-    Connect    iterations=10
+    Switch to vm    ${NET_VM}
 
 Wake up device
     Log To Console    Pressing the power button...

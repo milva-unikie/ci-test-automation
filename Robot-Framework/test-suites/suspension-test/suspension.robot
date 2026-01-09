@@ -33,7 +33,6 @@ Automatic suspension
     Check screen brightness  ${max_brightness}
 
     Start power measurement  ${BUILD_ID}   timeout=1500
-    Connect
     Switch to vm    ${GUI_VM}   user=${USER_LOGIN}
 
     Wait                     60
@@ -61,7 +60,6 @@ Automatic suspension
 
     Wake up device
     Close All Connections
-    Connect
     Start ydotoold
     Switch to vm             ${GUI_VM}   user=${USER_LOGIN}
 
