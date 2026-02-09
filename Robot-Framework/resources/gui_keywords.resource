@@ -122,7 +122,7 @@ Locate on screen
     [Timeout]          ${timeout} seconds
     ${coordinates}=        Set Variable  ${EMPTY}
     ${locate_status}=      Set Variable  FAIL
-    Run Command            mkdir -p test-images
+    Create directory       test-images
     FOR   ${i}   IN RANGE  ${iterations}
         ${screenshot_status}  ${result}     Take a screenshot   ${i+1}
         IF  '${screenshot_status}' == 'PASS'
@@ -395,7 +395,7 @@ Save screen recording
             Log To Console        Saving video file
             SSHLibrary.Get File   /home/${USER_LOGIN}/Videos/${video_file}   ${GUI_OUTPUT_DIR}/${video_file}
         END
-        Run Command   rm /home/${USER_LOGIN}/Videos/${video_file}
+        Remove file   /home/${USER_LOGIN}/Videos/${video_file}
     END
 
 Kill Initial Setup

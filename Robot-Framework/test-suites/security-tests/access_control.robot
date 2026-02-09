@@ -5,6 +5,7 @@
 Documentation       Verify access rights and isolation across memory zones, virtual machines, and system resources
 Test Tags           access-control  lenovo-x1  darter-pro  dell-7330
 
+Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 
 Suite Setup         Setup
@@ -71,8 +72,7 @@ Check access to host devices in ${vm}
 
 Check access
     [Arguments]   ${path}    ${expected}=True
-    ${output}    Run Command    ls ${path}    return=rc   rc_match=skip
-    ${status}    Evaluate    ${output}[0] == 0
+    ${status}    Run Keyword And Return Status    Check file exists   ${path}
     IF    ${status} != ${expected}
         Run Keyword And Continue On Failure      FAIL    User has access: ${status}, but expected: ${expected}
     END

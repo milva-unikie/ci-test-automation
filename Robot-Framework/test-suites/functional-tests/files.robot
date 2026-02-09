@@ -44,9 +44,7 @@ Open image with Oculante
     [Tags]             SP-T197  pre-merge  bat
     Switch to vm       ${GUI_VM}  user=${USER_LOGIN}
 
-    Run Command        mkdir test-images   rc_match=skip
     Run Command        WAYLAND_DISPLAY=wayland-1 grim ./screenshot.png   timeout=5
-
     Open Image         ./screenshot.png
 
     Switch to vm       ${ZATHURA_VM}

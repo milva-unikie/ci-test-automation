@@ -34,7 +34,7 @@ Check device status on FleetDM
 FleetDM Setup
     Skip If  $FLEETDM_ENROLL_SECRET=='${EMPTY}' or $FLEETDM_API_TOKEN=='${EMPTY}'  FleetDM secrets not available -> Skipping the test
     Switch to vm          ${GUI_VM}
-    Run Command           mkdir -p /etc/common/ghaf/fleet                            sudo=True
+    Create directory      /etc/common/ghaf/fleet   sudo=True
     Elevate to superuser
     Write                 install -m 600 /dev/stdin /etc/common/ghaf/fleet/enroll
     Sleep                 2

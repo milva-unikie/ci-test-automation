@@ -51,7 +51,7 @@ Check ip is in the blacklist
     [Arguments]     ${vm}  ${ip}
     Switch to vm    ${vm}
     ${output} 	    Run Command    ipset list f2b-sshBlacklist   sudo=True
-    Should contain  ${output}    ${ip}
+    Should Contain  ${output}    ${ip}
 
 Remove from the blacklist
     [Arguments]      ${ip}

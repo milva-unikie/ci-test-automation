@@ -77,10 +77,10 @@ Launch netcat test script
 
 Check the result files
     Switch to vm                      ${GUI_VM}
-    ${stealer_log}                    Run Command    cat /Shares/'Unsafe ${stealer_vm} share'/stolen.txt  sudo=True
+    ${stealer_log}                    Run Command    cat /Shares/'Unsafe ${stealer_vm} share'/stolen.txt  sudo=True  rc_match=skip
     ${stolen}                         Run Command    cat /Shares/'Unsafe ${stealer_vm} share'/stolen.txt | grep packet  sudo=True  rc_match=skip
-    ${server_log}                     Run Command    cat /Shares/'Unsafe ${server_vm} share'/server_received.txt  sudo=True
-    ${server_received}                Run Command    cat /Shares/'Unsafe ${server_vm} share'/server_received.txt | grep packet  sudo=True
+    ${server_log}                     Run Command    cat /Shares/'Unsafe ${server_vm} share'/server_received.txt  sudo=True  rc_match=skip
+    ${server_received}                Run Command    cat /Shares/'Unsafe ${server_vm} share'/server_received.txt | grep packet  sudo=True  rc_match=skip
     IF  $stealer_log == '${EMPTY}' or $server_log == '${EMPTY}'
         FAIL    Server and/or stealer script was not able to write to output file. Test might be broken.
     END
