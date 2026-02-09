@@ -15,11 +15,28 @@ Create text file
     Log To Console     Writing to file ${file_name}
     Run Command        echo '${text}' > ${file_name}
 
+Create directory
+    [Documentation]    Create a new directory
+    [Arguments]        ${directory}
+    ${output}          Run Command        mkdir ${directory}   return=rc,err   rc_match=skip
+    IF   ${output}[1] != 0
+        Should Contain   ${output}[0]   File exists   Failed to create the directory ${directory}
+    END
+
 Remove file
     [Documentation]    Remove file with given path & name, requires existing ssh connection
-    [Arguments]        ${file_name}   ${sudo}=False   ${rc_match}=equal
+    [Arguments]        ${file_name}   ${sudo}=False   ${recursively}=False   ${rc_match}=equal
     Log To Console     Removing file ${file_name}
-    Run Command        rm ${file_name}  sudo=${sudo}  rc_match=${rc_match}
+    IF  ${recursively}
+        Run Command        rm -r ${file_name}  sudo=${sudo}  rc_match=${rc_match}
+    ELSE
+        Run Command        rm ${file_name}  sudo=${sudo}  rc_match=${rc_match}
+    END
+
+Remove file if it exists
+    [Documentation]    Remove file with given path & name if it exists
+    [Arguments]   ${file_name}   ${sudo}=False   ${recursively}=False
+    Remove file   ${file_name}   sudo=${sudo}   recursively=${recursively}   rc_match=skip
 
 Copy file
     [Documentation]    Copy file, requires existing ssh connection

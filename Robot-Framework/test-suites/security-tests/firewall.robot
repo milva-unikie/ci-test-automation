@@ -68,7 +68,7 @@ Send connection request to closed port
     Log                Sending tcp and udp traffic to ip ${ip}, port ${port}     console=True
     ${timestamp_tcp}   Run Command    date +%s
     Set Test Variable  ${time_tcp}  ${timestamp_tcp}
-    Run Command        nc -v -w1 ${ip} ${port}   rc_match=skip
+    Run Command        nc -v -w1 ${ip} ${port}   rc_match=not_equal  compare_rc=0
     Sleep              1
     ${timestamp_udp}   Run Command    date +%s
     Set Test Variable  ${time_udp}  ${timestamp_udp}
@@ -80,8 +80,8 @@ Send connection request to closed port
 Check that packet arrived
     [Arguments]        ${since}    ${until}    ${port}    ${protocol}
     ${output}          Run Command    journalctl -k --since @${since} --until @${until} | grep 'kernel: Packet arrived'
-    ${status1}         Run Keyword And Return Status   Should contain    ${output}    DPT=${port}
-    ${status2}         Run Keyword And Return Status   Should contain    ${output}    ${protocol}
+    ${status1}         Run Keyword And Return Status   Should Contain    ${output}    DPT=${port}
+    ${status2}         Run Keyword And Return Status   Should Contain    ${output}    ${protocol}
     IF    ${status1} and ${status2}
         Log    ${protocol} Packet arrived for DPT=${port}     console=True
     ELSE
@@ -92,8 +92,8 @@ Check that packet arrived
 Check that packet refused
     [Arguments]        ${since}    ${until}    ${port}    ${protocol}
     ${output}          Run Command    journalctl -k --since @${since} --until @${until} | grep 'kernel: Packet passed through firewal'
-    ${status1}         Run Keyword And Return Status   Should contain    ${output}    DPT=${port}
-    ${status2}         Run Keyword And Return Status   Should contain    ${output}    ${protocol}
+    ${status1}         Run Keyword And Return Status   Should Contain    ${output}    DPT=${port}
+    ${status2}         Run Keyword And Return Status   Should Contain    ${output}    ${protocol}
     IF    ${status1} and ${status2}
         Log    ${protocol} Packet passed through firewall for DPT=${port}     console=True
     ELSE
@@ -104,8 +104,8 @@ Check that packet refused
 Check that TCP connection refused
     [Arguments]        ${since}    ${until}    ${port}
     ${output}          Run Command    journalctl -k --since @${since} --until @${until} | grep 'refused connection:'
-    ${status1}         Run Keyword And Return Status   Should contain    ${output}    DPT=${port}
-    ${status2}         Run Keyword And Return Status   Should contain    ${output}    PROTO=TCP
+    ${status1}         Run Keyword And Return Status   Should Contain    ${output}    DPT=${port}
+    ${status2}         Run Keyword And Return Status   Should Contain    ${output}    PROTO=TCP
     IF    ${status1} and ${status2}
         Log    TCP connection is refused for DPT=${port}     console=True
     ELSE

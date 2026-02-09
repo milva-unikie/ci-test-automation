@@ -119,7 +119,7 @@ Locate on screen
     [Timeout]          2 minutes
     ${coordinates}=        Set Variable  ${EMPTY}
     ${pass_status}=        Set Variable  FAIL
-    Run Command            mkdir test-images   rc_match=skip
+    Create directory       test-images
     ${screenshot_cmd}=     Set Variable   WAYLAND_DISPLAY=wayland-1 grim ./test-images/screenshot.png
     FOR   ${i}   IN RANGE  ${iterations}
         Log To Console           Taking screenshot
@@ -384,7 +384,7 @@ Stop screen recording
         ${name}               Replace String   ${test_name}   ${SPACE}   _
         SSHLibrary.Get File   /home/${USER_LOGIN}/Videos/${video_file}   ${GUI_TEMP_DIR}/${name}.mp4
     END
-    Run Command   rm /home/${USER_LOGIN}/Videos/${video_file}
+    Remove file       /home/${USER_LOGIN}/Videos/${video_file}
     [Teardown]        Kill App By Name   gpu-screen-recorder
 
 Kill Initial Setup

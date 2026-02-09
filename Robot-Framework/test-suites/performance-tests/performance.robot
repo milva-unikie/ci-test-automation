@@ -465,9 +465,9 @@ Prepare files for fileio test in VM
 Teardown of Fileio Read Isolation Test
     [Arguments]      ${reference-vm}  ${attacker-vm}  ${test_dir}
     Switch to vm     ${reference-vm}
-    Run Command      rm -r ${test_dir}   sudo=True
+    Remove file      ${test_dir}   sudo=True   recursively=True
     Switch to vm     ${attacker-vm}
-    Run Command      rm -r ${test_dir}   sudo=True
+    Remove file      ${test_dir}   sudo=True   recursively=True
     Teardown of Fileio Isolation Test
 
 Teardown of Fileio Isolation Test

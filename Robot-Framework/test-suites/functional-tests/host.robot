@@ -162,7 +162,7 @@ Get Nixos Version
     RETURN    ${major}  ${minor}  ${date}  ${commit}  ${name}
 
 Check QSPI Version is up to date
-    ${output}      Run Command     ota-check-firmware  rc_match=skip
+    ${output}      Run Command     ota-check-firmware  rc_match=skip   # TODO: Check
     ${fw_version}  ${sw_version}   Get qspi versions   ${output}
     Should Be True	'${fw_version}' == '${sw_version}'	  Update QSPI version! Test results can be wrong!
 

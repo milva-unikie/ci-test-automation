@@ -44,7 +44,7 @@ Play Audio And Verify
     [Arguments]     ${vm}  ${record_file}=play_${vm}.wav  ${sample_file}=wind.wav  ${tolerance}=2.0  ${volume_limit}=-30  ${sudo}=True
     Switch to vm    ${vm}
     Put File        ../test-files/${sample_file}   /tmp
-    Remove file     /tmp/recording_${vm}.wav    sudo=True  rc_match=skip
+    Remove file if it exists     /tmp/${record_file}    sudo=True
     ${duration}     Get Duration   ../test-files/${sample_file}
     IF   '${vm}' == '${GUI_VM}'
         Switch to vm   ${vm}  ${USER_LOGIN}
@@ -126,7 +126,7 @@ Verify Video File
 Verify Video Has Different Colors
     [Documentation]  Take frames from video and check that image is not all same color
     [Arguments]  ${video}  ${id}
-    Remove file          /tmp/video_frame*   sudo=True  rc_match=skip
+    Remove file if it exists   /tmp/video_frame*   sudo=True
     # Save one frame from the video 1 second before it ends
     Run Command          ffmpeg -sseof -1 -i ${video} -frames:v 1 /tmp/video_frame%01d.png  sudo=True
     SSHLibrary.Get File  /tmp/video_frame1.png   ${VIDEO_DIR}/video_frame${id}.png

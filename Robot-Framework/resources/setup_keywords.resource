@@ -22,8 +22,8 @@ Prepare Test Environment
         FAIL    The device is available only via serial, but tests require SSH.
     END
     Close All Connections
-    Switch to vm    ${HOST}
     Log versions and device unique data
+    Start ydotoold
     IF  ${IS_LAPTOP}
         Create test user
         IF  ${login}
@@ -38,7 +38,6 @@ Clean Up Test Environment
     IF    ${IS_AVAILABLE} == True and "${CONNECTION_TYPE}" == "ssh"
         # Temporarily taking journal log taking our from Orin-NX [SSRCSP-7453]
         IF  "${DEVICE_TYPE}" != "orin-nx"
-            Switch to vm   ${HOST}
             Save host journalctl
         END
         IF  ${IS_LAPTOP}
@@ -48,6 +47,7 @@ Clean Up Test Environment
     Close All Connections
 
 Save host journalctl
+    [Setup]        Switch to vm    ${HOST}
     Run Command    journalctl -b 0 > /tmp/jrnl.txt
     Run Command    ls -lh /tmp/jrnl.txt
     # Copy journal log file to Robot outputs
@@ -55,6 +55,7 @@ Save host journalctl
     OperatingSystem.File Should Exist    ${OUTPUT_DIR}/jrnl.txt
 
 Log versions and device unique data
+    [Setup]             Switch to vm    ${HOST}
     ${ghaf_version}     Run Command   ghaf-version
     Log                 Ghaf version: ${ghaf_version}     console=True
     ${nixos_version}    Run Command   nixos-version
@@ -93,6 +94,7 @@ Stop ydotoold
 Save gui icons and icon path
     [Documentation]         Save the icons that are used in multiple test cases
     ...                     Save path to icons
+    [Setup]                 Switch to vm    ${GUI_VM}
     Log To Console          Saving commonly used test icons
     ${ICONS}                Run Command   find $(echo $XDG_DATA_DIRS | tr ':' ' ') -type d -name "icons" 2>/dev/null   rc_match=skip
     Set Global Variable     ${ICONS}

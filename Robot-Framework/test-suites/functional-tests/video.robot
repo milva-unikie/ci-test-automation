@@ -40,7 +40,7 @@ Record Video With Camera
     [Documentation]  Start Camera application and record short video
     [Tags]  SP-T236
     Switch to vm            ${BUSINESS_VM}
-    Remove file             /tmp/video*   sudo=True  rc_match=skip
+    Remove file if it exists   /tmp/video*   sudo=True
     @{recorded_video_ids}   Create List
     ${listed_devices}       Run Command  v4l2-ctl --list-devices  sudo=True
     ${video_devices}        Get Regexp Matches  ${listed_devices}  (?im)(.*\\S*.*)(video)(\\d{1})  3

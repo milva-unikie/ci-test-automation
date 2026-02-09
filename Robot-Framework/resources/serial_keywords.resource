@@ -64,7 +64,7 @@ Check Serial Connection
     FOR    ${i}    IN RANGE    30
         Write Data     ${\n}
         ${output}      SerialLibrary.Read Until
-        ${status}      Run Keyword And Return Status    Should contain    ${output}    ghaf
+        ${status}      Run Keyword And Return Status    Should Contain    ${output}    ghaf
         IF    ${status}    BREAK
         Sleep   1
     END
@@ -83,13 +83,13 @@ Log In To Ghaf OS
     FOR    ${i}    IN RANGE    10
         Write Data        ${\n}
         ${output}         SerialLibrary.Read Until    terminator=${HOST} login
-        ${status}         Run Keyword And Return Status    Should contain    ${output}    ${HOST} login
+        ${status}         Run Keyword And Return Status    Should Contain    ${output}    ${HOST} login
         IF  ${status}
             Write Data    ${LOGIN}${\n}
             ${output}     SerialLibrary.Read Until    terminator=Password
             Write Data    ${PASSWORD}${\n}
         END
-        ${status}         Run Keyword And Return Status    Should contain    ${output}    @${HOST}
+        ${status}         Run Keyword And Return Status    Should Contain    ${output}    @${HOST}
         IF  ${status}
             Log           Successfully logged in      console=True
             BREAK

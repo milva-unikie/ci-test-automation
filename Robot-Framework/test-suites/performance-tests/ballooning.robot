@@ -64,14 +64,14 @@ Test ballooning in VM
     Log                               Maximum allowed total memory at inflate: ${max_mem_at_inflate} MiB  console=True
     Log                               Target total memory at deflate: ${max_init_memory} MiB  console=True
 
-    Run Command                       mkdir ${test_dir}                         rc_match=skip
+    Create directory                  ${test_dir}
     Put File                          performance-tests/consume_memory          ${test_dir}
     Put File                          performance-tests/log_memory              ${test_dir}
     Run Command                       chmod 777 ${test_dir}/consume_memory      sudo=True
     Run Command                       chmod 777 ${test_dir}/log_memory          sudo=True
     Run Command                       echo "started" > ${test_dir}/status_for_logging
-    Run Command                       mkdir ${test_dir}/script_status           rc_match=skip
-    Run Command                       rm -r ${test_dir}/script_status/*         sudo=True  rc_match=skip
+    Create directory                  ${test_dir}/script_status
+    Remove file if it exists          ${test_dir}/script_status/*               sudo=True   recursively=True
 
     Initial Memory Check              ${max_init_memory}  iterations=7
 

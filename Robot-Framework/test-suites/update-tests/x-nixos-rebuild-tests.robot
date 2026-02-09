@@ -194,7 +194,7 @@ Clone Ghaf Repository
     END
 
 Remove Ghaf Repository
-    Run Command     rm -r ${repository_path}   sudo=True
+    Remove file     ${repository_path}   sudo=True   recursively=True
 
 Teardown Audit Update Logging
     Set Client Configuration      timeout=10
