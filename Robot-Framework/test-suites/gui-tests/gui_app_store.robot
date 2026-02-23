@@ -118,7 +118,7 @@ Uninstall app in App Store
     Locate and click   text   Uninstall     scale=3   wiggle=True
     Locate and click   text   Permanently   scale=2   wiggle=True
     Run ydotool command   mousemove -x 340 -y 70
-    Run ydotool command   click 0xC0
+    Click
     Sleep  1
     Locate and click   text   Back   scale=3   wiggle=True
     # Verify uninstallation via GUI

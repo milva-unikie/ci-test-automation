@@ -29,7 +29,7 @@ ${SCREEN_SELECTED}     ${False}
 
 Log in, unlock and verify
     [Documentation]   Open desktop by logging in or unlocking. Verify that desktop is available.
-    [Arguments]       ${enable_dnd}=False
+    [Arguments]       ${enable_dnd}=False   ${kill_setup}=True
     ${logout_status}    Check if logged out   1
     IF  ${logout_status}
         Log in via GUI
@@ -41,13 +41,13 @@ Log in, unlock and verify
     # This is a workaround for a cosmic-greeter bug https://github.com/pop-os/cosmic-greeter/issues/135.
     # If the laptop did not login on the first attempt tries to press Tab to select the password field
     # and then attempts to log in again.
-    ${status}   ${output}   Run Keyword And Ignore Error   Verify desktop availability   logging_in=True
+    ${status}   ${output}   Run Keyword And Ignore Error   Verify desktop availability   logging_in=True   kill_setup=${kill_setup}
     IF   $status == 'FAIL'
         Log To Console    There was maybe a bug with the cosmic-greeter, let's try logging in again
         Log To Console    Pressing Tab to activate the password field
         Press Key(s)      TAB
         Log in via GUI
-        Verify desktop availability   logging_in=True
+        Verify desktop availability   logging_in=True   kill_setup=${kill_setup}
     END
 
     Disable automatic suspension
@@ -77,7 +77,7 @@ Log in via GUI
     Log To Console    Logging in
     # Make sure that password field is active by clicking on screen
     Run ydotool command   mousemove --absolute -x 50 -y 50   sudo=True
-    Run ydotool command   click 0xC0  sudo=True
+    Click  sudo=True
 
     IF  "${DEVICE_TYPE}" == "dell-7330"    Sleep  5
     Confidential password write  ${USER_PASSWORD}
@@ -171,7 +171,7 @@ Locate and click
     Run ydotool command   mousemove --absolute -x ${mouse_x} -y ${mouse_y}
     # Wiggle is sometimes needed for the window to recognize the mouse
     IF   ${wiggle}   Wiggle cursor
-    Run ydotool command   click 0xC0
+    Click
 
 Move cursor to corner
     [Documentation]    Move the cursor to the upper left corner so that it will not block searching further gui screenshots
@@ -183,9 +183,16 @@ Wiggle cursor
     Run ydotool command   mousemove 1 1
     Run ydotool command   mousemove -- -1 -1
 
+Click
+    [Documentation]    Click the current cursor location
+    [Arguments]    ${sudo}=False   ${wiggle}=False
+    IF   ${wiggle}   Wiggle cursor
+    Log To Console    Clicking
+    Run ydotool command   click 0xC0   sudo=${sudo}
+
 Verify desktop availability
     [Documentation]    Wait for the login and check that launcher icon is available on desktop
-    [Arguments]        ${logging_in}=False
+    [Arguments]        ${logging_in}=False   ${kill_setup}=True
 
     FOR   ${i}   IN RANGE  60
         ${logout_status}   Check if logged out   1
@@ -194,7 +201,7 @@ Verify desktop availability
     IF  ${logout_status}    FAIL    User session did not activate, user is still logged out
     IF  "${DEVICE_TYPE}" == "dell-7330"    Sleep   10
 
-    IF  ${logging_in}   Kill Initial Setup
+    IF  ${logging_in} and ${kill_setup}   Kill Initial Setup
 
     Log To Console         Verifying login by trying to detect the launcher icon
     # This is a workaround for launcher icon missing sometimes. If launcher icon can't be found tries to search

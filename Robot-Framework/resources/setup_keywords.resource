@@ -108,6 +108,7 @@ Save gui icons and icon path
     ${ICONS}                Run Command   find $(echo $XDG_DATA_DIRS | tr ':' ' ') -type d -name "icons" 2>/dev/null   rc_match=skip
     Set Global Variable     ${ICONS}
     Get icon                ${ICONS}/hicolor/scalable/apps  com.system76.CosmicAppLibrary.svg  crop=0  background=black  output_filename=launcher.png
+    Get icon                ${ICONS}/hicolor/scalable/apps  com.system76.CosmicAppLibrary.svg  crop=0  background=white  output_filename=launcher-light.png
     Get icon                ${ICONS}/Cosmic/scalable/actions  window-close-symbolic.svg  crop=0  background=white  output_filename=window-close.png
     Negate app icon         ${ICONS_DIR}/window-close.png  ${ICONS_DIR}/window-close-neg.png
     Get icon                ${ICONS}/Cosmic/scalable/actions  system-search-symbolic.svg  crop=0  background=white  output_filename=search.png
@@ -115,14 +116,15 @@ Save gui icons and icon path
     Get icon                ${ICONS}/Papirus/24x24/actions  system-shutdown.svg  crop=0  background=black  output_filename=power.png
     Get icon                ${ICONS}/Cosmic/scalable/actions  system-lock-screen-symbolic.svg  background=black  output_filename=lock.png
     OperatingSystem.Copy File    ../test-files/ghaf-close.png    ${ICONS_DIR}/
+    OperatingSystem.Copy File    ../test-files/ghaf-next.png    ${ICONS_DIR}/
 
 Login to laptop
     [Documentation]   Log in to the laptop
-    [Arguments]       ${enable_dnd}=False
+    [Arguments]       ${enable_dnd}=False   ${kill_setup}=True
     Check if ssh is ready on vm   ${GUI_VM}    timeout=60
     Start ydotoold
     Switch to vm   ${GUI_VM}  user=${USER_LOGIN}
-    Log in, unlock and verify   ${enable_dnd}
+    Log in, unlock and verify   ${enable_dnd}   ${kill_setup}
 
 Log out from laptop
     [Documentation]   Log out from the laptop
