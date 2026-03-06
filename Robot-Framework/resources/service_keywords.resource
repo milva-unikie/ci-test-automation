@@ -51,6 +51,9 @@ Verify Systemctl status
     [Timeout]          ${timeout}
     ${status}    ${diff}    ${failed_units}=    Wait Systemctl Starting With Time Measurement   add_params=${add_params}
 
+    Close All Connections
+    FAIL   SSHClientException: Timed out in 60 seconds
+
     IF   '${status}' != 'running'
         ${services_jctl_summary}=   Get JournalCtl Info For Not Running Services
         Log                         ${services_jctl_summary}     html=${True}
