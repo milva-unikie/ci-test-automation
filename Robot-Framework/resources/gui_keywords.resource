@@ -387,11 +387,11 @@ Stop screen recording
     # Get the name of the last recording
     ${video_file}    Run Command   ls /home/${USER_LOGIN}/Videos -Art | tail -n 1
     # Save the video file if the test failed
-    IF  $test_status=='FAIL' or $test_status=='SKIP'
+    #IF  $test_status=='FAIL' or $test_status=='SKIP'
         Log To Console        Saving video file
         ${name}               Replace String   ${test_name}   ${SPACE}   _
         SSHLibrary.Get File   /home/${USER_LOGIN}/Videos/${video_file}   ${GUI_OUTPUT_DIR}/${name}.mp4
-    END
+    #END
     Run Command   rm /home/${USER_LOGIN}/Videos/${video_file}
     [Teardown]        Kill App By Name   gpu-screen-recorder
 
