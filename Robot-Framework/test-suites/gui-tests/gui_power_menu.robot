@@ -43,7 +43,7 @@ GUI Suspend and wake up
     Switch to vm             ${GUI_VM}   user=${USER_LOGIN}
 
     # Sometimes screen wakeup has required a mouse move
-    Move Cursor
+    Wiggle cursor
 
     Wait Until Keyword Succeeds   30s   2s    Check the screen state   on
 
@@ -103,8 +103,7 @@ GUI Log out and log in
     ...               Login and verify that desktop is available.
     [Tags]            SP-T75  SP-T75-2  logoutlogin  lenovo-x1  darter-pro
     Select power menu option   text=LogOut   confirmation=True
-    ${logout_status}            Check if logged out
-    IF  not ${logout_status}    FAIL  Logout failed.
+    Wait Until Keyword Succeeds   10s   1s   Run Keyword And Expect Error  Logged out   Verify user login session
     Log in, unlock and verify
 
 *** Keywords ***

@@ -30,26 +30,18 @@ ${SCREEN_SELECTED}     ${False}
 Log in, unlock and verify
     [Documentation]   Open desktop by logging in or unlocking. Verify that desktop is available.
     [Arguments]       ${enable_dnd}=False
-    ${logout_status}    Check if logged out   1
-    IF  ${logout_status}
-        Log in via GUI
-    ELSE
+    ${login_status}    ${output}    Run Keyword And Ignore Error    Verify user login session
+    IF  '${login_status}' == 'PASS'
         ${lock}       Check if locked
         IF  ${lock}   Unlock
-    END
-
-    # This is a workaround for a cosmic-greeter bug https://github.com/pop-os/cosmic-greeter/issues/135.
-    # If the laptop did not login on the first attempt tries to press Tab to select the password field
-    # and then attempts to log in again.
-    ${status}   ${output}   Run Keyword And Ignore Error   Verify desktop availability   logging_in=True
-    IF   $status == 'FAIL'
-        Log To Console    There was maybe a bug with the cosmic-greeter, let's try logging in again
-        Log To Console    Pressing Tab to activate the password field
-        Press Key(s)      TAB
+    ELSE
         Log in via GUI
-        Verify desktop availability   logging_in=True
+        Wait Until Keyword Succeeds    60s    1s    Verify user login session
     END
 
+    Verify desktop availability   iterations=100   # TODO: Change the amount to be more reasonable after data has been collected
+
+    Kill Initial Setup
     Disable automatic suspension
     IF  ${enable_dnd}      Set do not disturb state   true
 
@@ -63,13 +55,12 @@ Log out and verify
         RETURN
     END
     IF  ${disable_dnd}   Set do not disturb state   false
-    ${logout_status}      Check if logged out    1
-    IF  not ${logout_status}
+    ${status}    ${output}    Run Keyword And Ignore Error    Verify user login session
+    IF  '${status}' == 'PASS'
         ${lock}       Check if locked
         IF  ${lock}   Unlock
         Log out via GUI
-        ${logout_status}  Check if logged out
-        IF  not ${logout_status}    FAIL  Failed to log out.
+        Wait Until Keyword Succeeds   10s   1s   Run Keyword And Expect Error  Logged out   Verify user login session
     END
 
 Log in via GUI
@@ -137,7 +128,10 @@ Locate on screen
             END
             IF    $locate_status=='PASS'   BREAK
         ELSE
-            Log To Console       FAIL: ${result}
+            ${error}     Get Regexp Matches   ${result}   (?s)Error:\s*(.+)$
+            ${log_msg}   Set Variable If   ${error}   ${error}[0]   ${result}
+            Log     FAIL: ${log_msg}   console=True
+            Sleep   0.5
         END
     END
     IF  ${debug_screenshot} and ($locate_status != $expected_result)
@@ -163,14 +157,11 @@ Take a screenshot
     RETURN   ${screenshot_status}  ${result}
 
 Locate and click
-    [Arguments]   ${type}  ${searched_item}  ${confidence}=0.99  ${iterations}=10  ${timeout}=120  ${scale}=1  ${wiggle}=True
+    [Arguments]   ${type}  ${searched_item}  ${confidence}=0.99  ${iterations}=10  ${timeout}=120  ${scale}=1  ${wiggle}=False
     ${mouse_x}  ${mouse_y}  Locate on screen  ${type}  ${searched_item}  ${confidence}  ${iterations}  timeout=${timeout}  scale=${scale}
     Run ydotool command   mousemove --absolute -x ${mouse_x} -y ${mouse_y}
     # Wiggle is sometimes needed for the window to recognize the mouse
-    IF   ${wiggle}
-        Run ydotool command   mousemove 1 1
-        Run ydotool command   mousemove -- -1 -1
-    END
+    IF   ${wiggle}   Wiggle cursor
     Run ydotool command   click 0xC0
 
 Move cursor to corner
@@ -178,69 +169,26 @@ Move cursor to corner
     Log To Console    Moving cursor to corner from blocking further image detection
     Run ydotool command   mousemove --absolute -x 50 -y 50
 
+Wiggle cursor
+    Log To Console    Moving the mouse a bit
+    Run ydotool command   mousemove 1 1
+    Run ydotool command   mousemove -- -1 -1
+
 Verify desktop availability
-    [Documentation]    Wait for the login and check that launcher icon is available on desktop
-    [Arguments]        ${logging_in}=False
+    [Documentation]   Check that launcher icon is available on desktop
+    [Arguments]       ${iterations}=30
+    Log To Console    Verifying login by trying to detect the launcher icon
+    Locate on screen  image  ${APP_MENU_LAUNCHER}  0.95  ${iterations}
 
-    ${activity}        Wait for user session to be active
-
-    # Give extra time if the service is still activating
-    IF  $activity == "activating"
-        Log To Console     User-session is ${activity}, login in process
-        ${activity}        Wait for user session to be active   iterations=60
+Verify user login session
+    [Documentation]   Confirm that the user has an active login session on a seat
+    ${sessions}       Run Command   loginctl list-sessions | grep seat   rc_match=skip
+    IF    $USER_LOGIN in $sessions
+        Log   Found active GUI session for ${USER_LOGIN}   console=True
+        RETURN
     END
-
-    IF  $activity != "active"    FAIL    User-session did not activate, it is ${activity}
-    IF  "${DEVICE_TYPE}" == "dell-7330"    Sleep   10
-
-    IF  ${logging_in}   Kill Initial Setup
-
-    Log To Console         Verifying login by trying to detect the launcher icon
-    # This is a workaround for launcher icon missing sometimes. If launcher icon can't be found tries to search
-    # for the power menu icon. Gui-vm user log is saved to help debugging.
-    ${status}   ${output}   Run Keyword And Ignore Error   Locate on screen  image  ${APP_MENU_LAUNCHER}  0.95  20
-    IF   $status == 'FAIL'
-        Get gui-vm user journalctl log
-        Log To Console    Could not find launcher icon, checking for power menu icon
-        Locate on screen  image  power.png  0.95  10
-    END
-
-Move cursor
-    Log To Console    Moving cursor to random location
-    ${x}    Evaluate  random.randint(50, 500)  modules=random
-    ${y}    Evaluate  random.randint(50, 500)  modules=random
-    Run ydotool command   mousemove --absolute -x ${x} -y ${y}
-
-Check if logged out
-    [Documentation]    Check if system is in logged out state
-    [Arguments]        ${iterations}=10
-    FOR   ${i}   IN RANGE  ${iterations}
-        ${activity}=       Run Command    systemctl --user is-active xdg-desktop-portal.service   rc_match=skip
-        IF  $activity == "active"
-            Log      User session is ${activity}, user is logged in  console=True
-        ELSE
-            Log      User session is ${activity}, user is logged out  console=True
-            RETURN    ${True}
-        END
-        Sleep  1
-    END
-    RETURN    ${False}
-
-Wait for user session to be active
-    [Documentation]    Wait until the user session is in active state
-    [Arguments]        ${iterations}=30
-    Log To Console     Waiting for the user session to be active...  no_newline=true 
-    FOR   ${i}   IN RANGE   ${iterations}
-        ${activity}=       Run Command    systemctl --user is-active xdg-desktop-portal.service   rc_match=skip
-        IF  $activity == "active"
-            Log    Success  console=True
-            Log    User session is ${activity}, user is logged in  console=True
-            BREAK
-        END
-        Log To Console   ${i}.  no_newline=true
-        Sleep   0.5
-    END
-    RETURN   ${activity}
+    Log     No active GUI session found for ${USER_LOGIN}   console=True
+    FAIL    Logged out
 
 Get icon
     [Documentation]    Copy icon svg file to test agent machine. Crop and convert the svg file to png.
@@ -250,13 +198,10 @@ Get icon
 
 Check if locked
     [Documentation]    Check if the screen lock is active
-    ${logout_status}   Check if logged out   1
-    IF  not ${logout_status}
-        ${status}   ${output}      Run Keyword And Ignore Error   Locate on screen  image  ${LOCK_ICON}  0.95  1  debug_screenshot=False
-        IF  '${status}' == 'PASS'
-            Log To Console    Screen is locked
-            RETURN    ${True}
-        END
+    ${status}   ${output}      Run Keyword And Ignore Error   Locate on screen  image  ${LOCK_ICON}  0.95  1  debug_screenshot=False
+    IF  '${status}' == 'PASS'
+        Log To Console    Screen is locked
+        RETURN    ${True}
     END
     Log To Console    Screen lock is not active
     RETURN    ${False}
@@ -295,12 +240,6 @@ Set do not disturb state
     ELSE
         Run Command   echo 3 > ~/.config/cosmic/com.system76.CosmicNotifications/v1/max_notifications
     END
-
-Get gui-vm user journalctl log
-    [Arguments]       ${filename}=gui-vm-user.txt
-    Run Command   journalctl --user > /tmp/${filename}
-    SSHLibrary.Get file   /tmp/${filename}   ${OUTPUT_DIR}/${filename}
-    OperatingSystem.File Should Exist   ${OUTPUT_DIR}/${filename}
 
 Timestamp last screenshot
     ${current_time}  DateTime.Get Current Date  result_format=%Y%m%d_%H%M%S
@@ -347,15 +286,6 @@ Run ydotool command
         Run Command    YDOTOOL_SOCKET=${YDOTOOL_SOCKET} ydotool ${command}
     END
     Sleep   0.2
-
-Change to gray wallpaper
-    Log To Console    Changing to gray wallpaper
-    Put File          ../test-files/background.config   .
-    Run Command   mv background.config .config/cosmic/com.system76.CosmicBackground/v1/all
-
-Restore default wallpaper
-    Log To Console    Changing back to default wallpaper
-    Remove file       ~/.config/cosmic/com.system76.CosmicBackground/v1/all
 
 Start screen recording
     [Setup]          Kill App By Name   gpu-screen-recorder
