@@ -8,6 +8,10 @@ Library             OperatingSystem
 Library             DateTime
 Library             String
 
+*** Variables ***
+${sudo_counter}         0
+${sudo_commands_log}    ${OUTPUT_DIR}/outputs/sudos.txt
+
 
 *** Keywords ***
 
@@ -22,6 +26,14 @@ Run Command
     ...    If only `out` is requested, stdout is returned directly. If `err` or `rc` is requested,
     ...    a list is returned in the order: out, err, rc (only including requested values).
     [Arguments]  ${cmd}  ${return}=out  ${sudo}=False  ${rc_match}=equal  ${compare_rc}=0  ${timeout}=60
+
+    IF    ${sudo}
+        ${sudo_counter}    Evaluate    int(${sudo_counter}) + 1
+        Set Global Variable    ${sudo_counter}    ${sudo_counter}
+        ${timestamp}    Get Current Date    result_format=%Y-%m-%d %H:%M:%S
+        Append To File    ${sudo_commands_log}    ${timestamp} | #${sudo_counter} | ${cmd}${\n}
+        Log    sudo used ${sudo_counter} times    console=True
+    END
 
     ${output}  ${err}  ${rc}    Execute Command  ${cmd}  return_stderr=True  return_rc=True  sudo=${sudo}  sudo_password=${PASSWORD}  timeout=${timeout}
     Log   Output: ${output} \nRc: ${rc} \nErr: ${err}
