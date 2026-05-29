@@ -166,6 +166,7 @@ Validate Forward Secure Sealing
             ${msg}              Catenate   SEPARATOR=\n   Fss test failed in ${vm}:
             ...    @{failed_tests}
             Run Keyword And Continue On Failure   FAIL   ${msg}
+            Run Keyword And Continue On Failure   Run Command   fss-triage   sudo=True
         END
     END
     [Teardown]  Run Keyword If Test Failed   SKIP   Known issue: SSRCSP-8425
