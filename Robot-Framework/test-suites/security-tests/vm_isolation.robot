@@ -12,6 +12,7 @@ Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/service_keywords.resource
 
 Suite Setup         Switch to vm   ${NET_VM}
+Suite Teardown      Ensure Robot sudoers is installed in all VMs   skip_boot_check=True
 
 
 *** Test Cases ***

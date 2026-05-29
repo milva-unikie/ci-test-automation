@@ -9,8 +9,10 @@ Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/service_keywords.resource
+Resource            ../../resources/setup_keywords.resource
 
 Suite Setup         Suite Setup
+Suite Teardown      Ensure Robot sudoers is installed in all VMs   skip_boot_check=True
 
 
 *** Test Cases ***

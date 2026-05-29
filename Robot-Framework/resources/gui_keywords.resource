@@ -33,13 +33,14 @@ Log in, unlock and verify
     ${logout_status}    Check if logged out   1
     IF  ${logout_status}
         Log in via GUI
-        Wait Until Keyword Succeeds    60s    1s    Verify user login session
+        Wait Until Keyword Succeeds    60s    1s    Verify login session
     ELSE
         ${lock}       Check if locked
         IF  ${lock}   Unlock
     END
 
-    Verify desktop availability   iterations=100
+    ${iterations}   Set Variable If    "${DEVICE_TYPE}" == "dell-7330"    130    100
+    Verify desktop availability   iterations=${iterations}
 
     Kill Initial Setup
     Disable automatic suspension
@@ -67,6 +68,9 @@ Log out and verify
 Log in via GUI
     [Documentation]   Log in by typing password
     Log To Console    Logging in
+    Wait Until Keyword Succeeds    60s    1s    Verify login session    greeter
+    # Sleep is needed to make sure that greeter is ready, screenshots can't be used because greeter has control of the screen
+    Sleep    5
     # Make sure that password field is active by clicking on screen
     Run ydotool command   mousemove --absolute -x 50 -y 50   sudo=True
     Click   sudo=True
@@ -211,21 +215,23 @@ Verify desktop availability
     Log To Console    Verifying login by trying to detect the launcher icon
     Locate on screen  image  ${APP_MENU_LAUNCHER}  0.95  ${iterations}
 
-Verify user login session
-    [Documentation]   Confirm that the user has an active login session on a seat
+Verify login session
+    [Documentation]   Confirm that the given user has an active login session on a seat
+    [Arguments]       ${session_user}=${USER_LOGIN}
+    Run Command       loginctl list-sessions   # For debugging
     ${sessions}       Run Command   loginctl list-sessions | grep seat   rc_match=skip
-    IF    $USER_LOGIN in $sessions
-        Log   Found active GUI session for ${USER_LOGIN}   console=True
+    IF    $session_user in $sessions
+        Log   Found active GUI session for ${session_user}   console=True
         RETURN
     END
-    Log     No active GUI session found for ${USER_LOGIN}   console=True
-    FAIL    User is logged out
+    Log     No active GUI session found for ${session_user}   console=True
+    FAIL    User ${session_user} is not logged in
 
 Check if logged out
     [Documentation]    Check if system is in logged out state
     [Arguments]        ${iterations}=10
     FOR   ${i}   IN RANGE  ${iterations}
-        ${status}    ${output}    Run Keyword And Ignore Error    Verify user login session
+        ${status}    ${output}    Run Keyword And Ignore Error    Verify login session
         IF    '${status}' == 'PASS'
             Log      Found active GUI session for ${USER_LOGIN}, user is logged in  console=True
         ELSE

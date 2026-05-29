@@ -266,6 +266,7 @@ Run Command on VM Via Serial
     SerialLibrary.Read Until    terminator=${\n}
     ${search1}         Set Variable    (yes/no/[fingerprint])?
     ${search2}         Set Variable    assword
+    ${post_auth_output}    Set Variable    ${EMPTY}
     ${status}  ${output}  Run Keyword And Ignore Error  SerialLibrary.Read Until  terminator=${search1}
     IF  $search1 in $output
         Write Data       yes${\n}
@@ -281,12 +282,15 @@ Run Command on VM Via Serial
     END
     # If the command was run with sudo expect another password prompt
     IF    ${sudo}
-        ${status}  ${output}  Run Keyword And Ignore Error  SerialLibrary.Read Until  terminator=${search2}
-        IF  $search2 in $output
+        ${status}  ${post_auth_output}  Run Keyword And Ignore Error  SerialLibrary.Read Until  terminator=${search2}
+        IF  $search2 in $post_auth_output
             Send Password Via Serial Quietly
         END
     END
     ${prompt_output}   SerialLibrary.Read Until    terminator=ghaf@${HOST}:
+    IF    $post_auth_output != '${EMPTY}' and $search2 not in $post_auth_output
+        ${prompt_output}    Catenate    SEPARATOR=    ${post_auth_output}    ${prompt_output}
+    END
     IF    ${opened_here}
         Delete All Ports
     END
