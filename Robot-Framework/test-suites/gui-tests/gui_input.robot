@@ -3,14 +3,14 @@
 
 *** Settings ***
 Documentation       Tests for input-related GUI functionality
-Test Tags           gui-input  lenovo-x1  darter-pro
 
-Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/gui-vm_keywords.resource
+Resource            ../../resources/gui_keywords.resource
 
 Test Setup          Start screen recording
 Test Teardown       Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
 
+Test Tags           gui-input  lenovo-x1  darter-pro
 
 *** Test Cases ***
 

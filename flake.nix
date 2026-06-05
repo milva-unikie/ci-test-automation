@@ -48,6 +48,24 @@
               robotframework-debuglibrary
               ;
           };
+          organizeRobotTags = pkgs.writeShellApplication {
+            name = "organize-robot-tags";
+            runtimeInputs = [
+              pkgs.python3
+            ];
+            text = ''
+              exec python3 ${./pkgs/robot-helpers/organize_robot_tags.py} "$@"
+            '';
+          };
+          organizeRobotSettings = pkgs.writeShellApplication {
+            name = "organize-robot-settings";
+            runtimeInputs = [
+              pkgs.python3
+            ];
+            text = ''
+              exec python3 ${./pkgs/robot-helpers/organize_robot_settings.py} "$@"
+            '';
+          };
           default = ghaf-robot;
         };
 
@@ -85,9 +103,14 @@
                 PyP100
                 plugp100
                 KMTronic
+                organizeRobotTags
+                organizeRobotSettings
               ])
             ))
           ];
+          shellHook = ''
+            export PATH=${self.packages.${system}.organizeRobotTags}/bin:${self.packages.${system}.organizeRobotSettings}/bin:$PATH
+          '';
         };
 
         # Allows formatting files with `nix fmt`

@@ -14,9 +14,20 @@ if [ ! -f ./githooks/check-commit.sh ]; then
     exit 1
 fi
 
+if [ ! -f ./githooks/pre-commit.sh ]; then
+    echo "./githooks/pre-commit.sh not found" >&2
+    exit 1
+fi
+
 if [ -e ./.git/hooks/commit-msg ]; then
     echo "./.git/hooks/commit-msg exists already" >&2
     exit 1
 fi
 
+if [ -e ./.git/hooks/pre-commit ]; then
+    echo "./.git/hooks/pre-commit exists already" >&2
+    exit 1
+fi
+
 ln -s ../../githooks/check-commit.sh ./.git/hooks/commit-msg
+ln -s ../../githooks/pre-commit.sh ./.git/hooks/pre-commit

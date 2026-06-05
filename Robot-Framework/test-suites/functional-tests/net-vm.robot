@@ -3,16 +3,16 @@
 
 *** Settings ***
 Documentation       Testing Network VM
-Test Tags           net-vm  bat
 
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/service_keywords.resource
+Resource            ../../resources/device_control.resource
 Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/virtualization_keywords.resource
 Resource            ../../resources/wifi_keywords.resource
-Resource            ../../resources/device_control.resource
-Resource            ../../resources/service_keywords.resource
 
+Test Tags           net-vm  bat
 
 *** Test Cases ***
 

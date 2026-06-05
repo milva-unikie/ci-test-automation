@@ -3,20 +3,20 @@
 
 *** Settings ***
 Documentation       Testing power options
-Test Tags           gui-power
 
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/device_control.resource
-Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/gui-vm_keywords.resource
+Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/measurement_keywords.resource
+Resource            ../../resources/serial_keywords.resource
 Resource            ../../resources/setup_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/serial_keywords.resource
 
 Test Setup          GUI Power Test Setup
 Test Teardown       GUI Power Test Teardown
 
+Test Tags           gui-power
 
 *** Test Cases ***
 

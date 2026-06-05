@@ -4,16 +4,16 @@
 *** Settings ***
 Documentation       Validates that individual VM failures are isolated and do not impact
 ...                 the availability, performance, or security of other VMs or the host system.
-Test Tags           vm-isolation  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/app_keywords.resource
+Resource            ../../resources/service_keywords.resource
 Resource            ../../resources/setup_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/service_keywords.resource
 
 Suite Setup         Switch to vm   ${NET_VM}
 Suite Teardown      Ensure Robot sudoers is installed in all VMs   skip_boot_check=True
 
+Test Tags           vm-isolation  lenovo-x1  darter-pro  dell-7330
 
 *** Test Cases ***
 

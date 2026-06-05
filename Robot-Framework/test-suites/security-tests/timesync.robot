@@ -3,14 +3,14 @@
 
 *** Settings ***
 Documentation       Testing time synchronization
-Test Tags           timesync
 
 Library             ../../lib/TimeLibrary.py
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/service_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/wifi_keywords.resource
-Resource            ../../resources/service_keywords.resource
 
+Test Tags           timesync
 
 *** Variables ***
 ${wrong_time}       01/11/23 11:00:00 UTC

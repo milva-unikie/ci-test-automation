@@ -3,13 +3,12 @@
 
 *** Settings ***
 Documentation       Testing target device bootup time.
-Test Tags           boot-time
 
-Resource            ../../config/variables.robot
 Library             ../../lib/PerformanceDataProcessing.py  ${DEVICE}  ${BUILD_ID}  ${COMMIT_HASH}  ${JOB}
 ...                 ${PERF_DATA_DIR}  ${CONFIG_PATH}  ${PLOT_DIR}  ${PERF_LOW_LIMIT}
-Library             DateTime
 Library             Collections
+Library             DateTime
+Resource            ../../config/variables.robot
 Resource            ../../resources/device_control.resource
 Resource            ../../resources/performance_keywords.resource
 Resource            ../../resources/serial_keywords.resource
@@ -18,6 +17,8 @@ Resource            ../../resources/ssh_keywords.resource
 Variables           ../../lib/performance_thresholds.py
 
 Suite Teardown      Close All Connections
+
+Test Tags           boot-time
 
 *** Variables ***
 ${PING_TIMEOUT}     180

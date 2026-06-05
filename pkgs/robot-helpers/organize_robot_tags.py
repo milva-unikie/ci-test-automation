@@ -37,9 +37,10 @@ def process_file(path):
         prefix, tag_str = match.groups()
         tags = tag_str.split()
         ordered = sorted(tags, key=tag_priority)
+        normalized = prefix + "  ".join(ordered)
 
-        if tags != ordered:
-            lines[i] = prefix + "  ".join(ordered)
+        if line != normalized:
+            lines[i] = normalized
             changed = True
 
     if changed:

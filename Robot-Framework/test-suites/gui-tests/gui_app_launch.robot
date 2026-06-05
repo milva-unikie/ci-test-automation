@@ -3,20 +3,20 @@
 
 *** Settings ***
 Documentation       Launch applications via GUI
-Test Tags           SP-T285  gui-app-launch  lenovo-x1  darter-pro
 
-Resource            ../../config/variables.robot
-Variables           ../../lib/performance_thresholds.py
 Library             ../../lib/PerformanceDataProcessing.py  ${DEVICE}  ${BUILD_ID}  ${COMMIT_HASH}  ${JOB}
 ...                 ${PERF_DATA_DIR}  ${CONFIG_PATH}  ${PLOT_DIR}  ${PERF_LOW_LIMIT}
+Resource            ../../config/variables.robot
 Resource            ../../resources/app_keywords.resource
 Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
+Variables           ../../lib/performance_thresholds.py
 
+Suite Teardown      Create App Launch Montage And Move Graphs
 Test Setup          Start screen recording
 Test Teardown       Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
-Suite Teardown      Create App Launch Montage And Move Graphs
 
+Test Tags           SP-T285  gui-app-launch  lenovo-x1  darter-pro
 
 *** Test Cases ***
 

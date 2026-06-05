@@ -4,16 +4,15 @@
 *** Settings ***
 Documentation       Testing automatic suspension
 
+Library             ../../lib/output_parser.py
+Library             JSONLibrary
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/device_control.resource
-Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/gui-vm_keywords.resource
+Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/measurement_keywords.resource
 Resource            ../../resources/setup_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
-Library             ../../lib/output_parser.py
-Library             JSONLibrary
-
 
 *** Test Cases ***
 

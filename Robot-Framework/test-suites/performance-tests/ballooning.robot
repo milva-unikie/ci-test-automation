@@ -3,19 +3,19 @@
 
 *** Settings ***
 Documentation       Testing performance of memory ballooning
-Test Tags           ballooning
 
-Resource            ../../config/variables.robot
 Library             ../../lib/PerformanceDataProcessing.py  ${DEVICE}  ${BUILD_ID}  ${COMMIT_HASH}  ${JOB}
 ...                 ${PERF_DATA_DIR}  ${CONFIG_PATH}  ${PLOT_DIR}  ${PERF_LOW_LIMIT}
+Resource            ../../config/variables.robot
 Resource            ../../resources/device_control.resource
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/performance_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 
 Suite Teardown      Close All Connections
 Test Teardown       Ballooning Test Teardown
 Test Timeout        10 minutes
 
+Test Tags           ballooning
 
 *** Variables ***
 ${test_dir}               /tmp/ballooning

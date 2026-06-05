@@ -3,17 +3,18 @@
 
 *** Settings ***
 Documentation       Check security in logs
-Test Tags           logging  lenovo-x1  darter-pro
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/wifi_keywords.resource
+
+Library             DateTime
+Library             String
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/device_control.resource
 Resource            ../../resources/setup_keywords.resource
-Library             DateTime
-Library             String
+Resource            ../../resources/ssh_keywords.resource
+Resource            ../../resources/wifi_keywords.resource
 
 Suite Setup         Logging Setup
 
+Test Tags           logging  lenovo-x1  darter-pro
 
 *** Test Cases ***
 

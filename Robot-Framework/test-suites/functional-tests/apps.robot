@@ -3,12 +3,12 @@
 
 *** Settings ***
 Documentation       Testing launching applications
-Test Tags           apps  pre-merge  bat  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/app_keywords.resource
 
 Test Teardown       Kill App in VM   ${TEST_APP-VM}   ${TEST_PROCESS_NAME}
 
+Test Tags           apps  pre-merge  bat  lenovo-x1  darter-pro  dell-7330
 
 *** Test Cases ***
 

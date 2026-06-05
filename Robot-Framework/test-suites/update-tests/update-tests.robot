@@ -3,17 +3,18 @@
 
 *** Settings ***
 Documentation       Tests for update tooling
-Test Tags           cachix-update  regression
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/device_control.resource
+
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/device_control.resource
 Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/setup_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/update_keywords.resource
 
 Test Teardown       Roll back to original generation
 Test Timeout        15 minutes
 
+Test Tags           cachix-update  regression
 
 *** Test Cases ***
 

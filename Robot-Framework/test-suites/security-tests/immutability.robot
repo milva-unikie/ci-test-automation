@@ -3,17 +3,17 @@
 
 *** Settings ***
 Documentation       Verify that VMs boot into immutable, signed filesystem snapshots
-Test Tags           immutability  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/file_keywords.resource
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/service_keywords.resource
 Resource            ../../resources/setup_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 
 Suite Setup         Suite Setup
 Suite Teardown      Ensure Robot sudoers is installed in all VMs   skip_boot_check=True
 
+Test Tags           immutability  lenovo-x1  darter-pro  dell-7330
 
 *** Test Cases ***
 

@@ -4,21 +4,20 @@
 *** Settings ***
 Documentation       Gathering performance data
 
-Resource            ../../config/variables.robot
 Library             ../../lib/output_parser.py
 Library             ../../lib/PerformanceDataProcessing.py  ${DEVICE}  ${BUILD_ID}  ${COMMIT_HASH}  ${JOB}
 ...                 ${PERF_DATA_DIR}  ${CONFIG_PATH}  ${PLOT_DIR}  ${PERF_LOW_LIMIT}
 Library             Collections
 Library             DateTime
+Resource            ../../config/variables.robot
+Resource            ../../resources/measurement_keywords.resource
+Resource            ../../resources/mem_recording_keywords.resource
 Resource            ../../resources/performance_keywords.resource
 Resource            ../../resources/serial_keywords.resource
 Resource            ../../resources/setup_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/measurement_keywords.resource
-Resource            ../../resources/mem_recording_keywords.resource
 
 Suite Setup         Switch to vm   ${HOST}
-
 
 *** Variables ***
 @{FAILED_VM_TESTS}

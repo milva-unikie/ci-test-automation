@@ -3,14 +3,15 @@
 
 *** Settings ***
 Documentation       Check network related security
-Test Tags           network-security
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/wifi_keywords.resource
+
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/device_control.resource
-Resource            ../../resources/setup_keywords.resource
 Resource            ../../resources/security_blacklist_keywords.resource
+Resource            ../../resources/setup_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
+Resource            ../../resources/wifi_keywords.resource
 
+Test Tags           network-security
 
 *** Test Cases ***
 

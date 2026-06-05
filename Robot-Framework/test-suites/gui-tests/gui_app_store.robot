@@ -3,7 +3,6 @@
 
 *** Settings ***
 Documentation       Testing App Store
-Force Tags          app-store  darter-pro  storeDisk-only
 
 Resource            ../../resources/app_keywords.resource
 Resource            ../../resources/gui_keywords.resource
@@ -13,6 +12,7 @@ Test Setup          Run Keywords   Switch to vm   ${GUI_VM}  user=${USER_LOGIN} 
 Test Teardown       App Store Test Teardown
 Test Timeout        10 minutes
 
+Force Tags          app-store  darter-pro  storeDisk-only
 
 *** Test Cases ***
 

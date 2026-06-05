@@ -3,19 +3,19 @@
 
 *** Settings ***
 Documentation       Testing logging
-Test Tags           logging  bat  lenovo-x1  darter-pro  dell-7330
 
+Library             ../../lib/helper_functions.py
+Library             Collections
 Library             DateTime
 Library             OperatingSystem
-Library             Collections
-Library             ../../lib/helper_functions.py
-Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/common_keywords.resource
-Resource            ../../resources/service_keywords.resource
 Resource            ../../resources/measurement_keywords.resource
+Resource            ../../resources/service_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 
 Suite Setup         Logging Suite Setup
 
+Test Tags           logging  bat  lenovo-x1  darter-pro  dell-7330
 
 *** Variables ***
 ${TEST_LOG}           log_check_${BUILD_ID}

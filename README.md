@@ -38,13 +38,13 @@ This hook will check the commit message for most trivial mistakes against [curre
 
 ### Installing git hooks
 
-Just run ``./githooks/install-git-hooks.sh`` in repository main directory, and you should be good to go. Commit message checking script will then run when you commit something.
+Just run ``./githooks/install-git-hooks.sh`` in repository main directory, and you should be good to go. The commit message hook will then run when you commit something, and the pre-commit hook will automatically organize Robot tags/settings and restage any rewritten ``.robot``/``.resource`` files.
 
 If you have branches before the git hooks were committed to the repo, you'll have to either rebase them on top of main branch or cherry pick the git hooks commit into your branch.
 
 Also note that any existing commit messages in any branch won't be checked, only new commit messages will be checked.
 
-If you encounter any issues with the git commit message hook, please report them. And while waiting for a fix, you may remove the hook by running ``rm -f .git/hooks/commit-msg`` in the main directory of the repository.
+If you encounter any issues with the git hooks, please report them. And while waiting for a fix, you may remove them by running ``rm -f .git/hooks/commit-msg .git/hooks/pre-commit`` in the main directory of the repository.
 
 ## Licensing
 

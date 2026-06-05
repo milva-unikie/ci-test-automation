@@ -3,18 +3,19 @@
 
 *** Settings ***
 Documentation       Tests for update tooling
-Test Tags           rebuild
 
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/device_control.resource
 Resource            ../../resources/common_keywords.resource
+Resource            ../../resources/device_control.resource
 Resource            ../../resources/file_keywords.resource
-Resource            ../../resources/setup_keywords.resource
-Resource            ../../resources/update_keywords.resource
 Resource            ../../resources/service_keywords.resource
+Resource            ../../resources/setup_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
+Resource            ../../resources/update_keywords.resource
 
 Suite Setup          Rebuild Setup
 Suite Teardown       Rebuild Teardown
+
+Test Tags           rebuild
 
 *** Variables ***
 ${repository_path}      /persist/ghaf

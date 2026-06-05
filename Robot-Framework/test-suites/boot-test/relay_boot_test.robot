@@ -3,18 +3,18 @@
 
 *** Settings ***
 Documentation       Testing target device booting up.
-Test Tags           ssh_boot_test
 
 Library             ../../lib/output_parser.py
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/device_control.resource
-Resource            ../../resources/serial_keywords.resource
-Resource            ../../resources/ssh_keywords.resource
-Resource            ../../resources/service_keywords.resource
 Resource            ../../resources/file_keywords.resource
+Resource            ../../resources/serial_keywords.resource
+Resource            ../../resources/service_keywords.resource
+Resource            ../../resources/ssh_keywords.resource
 
 Suite Teardown      Teardown
 
+Test Tags           ssh_boot_test
 
 *** Variables ***
 ${CONNECTION_TYPE}           ssh
