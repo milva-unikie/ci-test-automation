@@ -27,6 +27,8 @@ Automatic suspension
     [Setup]           Test setup
     [Teardown]        Test teardown
 
+    FAIL   Fail on purpose
+
     ${suspended_power_limit}     Set Variable    3500
     ${rel_power_change_limit}    Set Variable    25
 
