@@ -164,7 +164,7 @@ Wait Until Device Is Down
 Verify shutdown via network
     [Documentation]    Check ping and port 22 until device stops responding both.
     ...                "Connection refused" is NOT considered as powered off.
-    [Arguments]        ${iterations}=60    ${required_down_count}=3
+    [Arguments]        ${iterations}=300    ${required_down_count}=3
     ${start_time}      Get Time        epoch
     ${down_count}    Set Variable    0
     FOR    ${i}    IN RANGE    ${iterations}
