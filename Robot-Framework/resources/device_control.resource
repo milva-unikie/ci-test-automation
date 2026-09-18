@@ -6,6 +6,7 @@ Library             ../lib/PlugLibrary/PlugLibrary.py  ${PLUG_TYPE}
 Library             ../lib/SwitchbotLibrary.py  ${SWITCH_TOKEN}  ${SWITCH_SECRET}
 Resource            ../resources/common_keywords.resource
 Resource            ../resources/serial_keywords.resource
+Resource            ../resources/setup_keywords.resource
 
 
 *** Keywords ***
@@ -68,8 +69,9 @@ Turn Laptop On
     END
 
 Soft Reboot Device And Connect
-    [Documentation]  Reboot device from ${vm} and connect after the reboot
-    [Arguments]      ${vm}=${HOST}    ${retry}=60
+    [Documentation]  Reboot device from ${GUI_VM} (laptops) or ${HOST} (Orins), reconnect and log in when testing a laptop
+    [Arguments]      ${retry}=60
+    ${vm}                  Set Variable If   ${IS_LAPTOP}   ${GUI_VM}   ${HOST}
     ${reboot_log_since}    Get Time    epoch
     ${soft_reboot_ok}      Run Keyword And Return Status
     ...    Run Keywords
@@ -80,15 +82,22 @@ Soft Reboot Device And Connect
         Collect Logs After Failed Soft Reboot    ${reboot_log_since}
         FAIL    Soft reboot failed.
     END
+    IF    ${IS_LAPTOP}
+        Login to laptop
+    END
 
 Hard Reboot Device And Connect
-    [Arguments]     ${verify_shutdown}=True
+    [Documentation]  Hard reboot the device, reconnect and log in when testing a laptop
+    [Arguments]     ${verify_shutdown}=True    ${enable_dnd}=False
     IF  ${IS_LAPTOP}
         Reboot Laptop    verify_shutdown=${verify_shutdown}
     ELSE
         Reboot Orin
     END
     Connect After Reboot
+    IF    ${IS_LAPTOP}
+        Login to laptop    enable_dnd=${enable_dnd}
+    END
 
 Collect Logs After Failed Soft Reboot
     [Arguments]    ${since}

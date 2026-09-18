@@ -101,7 +101,6 @@ Account lockout Teardown
     Unlock account and login
     Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
     Soft Reboot Device And Connect
-    Login to laptop
     IF  $TEST_STATUS == 'FAIL'
         Log Error   Account lockout    Account lockout failed
         SKIP        Known Issue: SSRCSP-8943
