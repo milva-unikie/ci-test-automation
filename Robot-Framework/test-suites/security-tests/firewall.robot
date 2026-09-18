@@ -42,7 +42,7 @@ Check that internal ping flooding triggers blacklisting
             ${vm}
         END
     END
-    [Teardown]      Run Keyword If Test Failed    Blacklist Teardown
+    [Teardown]      Run Keyword If Test Failed    Hard Reboot Device And Connect
 
 Check that internal tcp syn flooding triggers blacklisting
     [Tags]            SP-T299  SP-T299-2  lenovo-x1  darter-pro  dell-7330
@@ -52,7 +52,7 @@ Check that internal tcp syn flooding triggers blacklisting
             ${vm}
         END
     END
-    [Teardown]      Run Keyword If Test Failed    Blacklist Teardown
+    [Teardown]      Run Keyword If Test Failed    Hard Reboot Device And Connect
 
 Check that external ping flooding triggers blacklisting
     [Documentation]   Validate that ping flooding from the test agent to net-vm triggers firewall blacklisting.
@@ -62,7 +62,7 @@ Check that external ping flooding triggers blacklisting
     External Ping Flood NetVM
     Verify NetVM Blacklist Contains IP Via Serial    ${ext_attacker_ip}
     Clear NetVM Blacklist Via Serial    ${ext_attacker_ip}
-    [Teardown]      Run Keyword If Test Failed    Blacklist Teardown
+    [Teardown]      Run Keyword If Test Failed    Hard Reboot Device And Connect
 
 Check that external tcp syn flooding triggers blacklisting
     [Documentation]   Validate that tcp syn probing from the test agent to net-vm triggers firewall blacklisting.
@@ -72,7 +72,7 @@ Check that external tcp syn flooding triggers blacklisting
     Tcp Syn Flood         ${DEVICE_IP_ADDRESS}
     Verify NetVM Blacklist Contains IP Via Serial    ${ext_attacker_ip}
     Clear NetVM Blacklist Via Serial    ${ext_attacker_ip}
-    [Teardown]      Run Keyword If Test Failed    Blacklist Teardown
+    [Teardown]      Run Keyword If Test Failed    Hard Reboot Device And Connect
 
 Check VM firewall policy
     [Documentation]      Check that blocked pages can not be accessed, policy only applies to chrome-vm
@@ -257,7 +257,3 @@ Tcp Syn Flood
         ${rc}              Run Command    ${flood_cmd}
         Run Keyword If     ${rc}!=1       FAIL       Blacklisting not detected
     END
-
-Blacklist Teardown
-    Hard Reboot Device And Connect
-    Run Keyword If    $IS_LAPTOP == 'True'    Login to laptop

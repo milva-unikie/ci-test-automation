@@ -135,11 +135,10 @@ GUI Power Test Setup
 
 GUI Power Test Teardown
     IF  $TEST_STATUS != 'PASS' and 'took too long' not in $TEST_MESSAGE
-        Hard Reboot Device And Connect
+        Hard Reboot Device And Connect    enable_dnd=True
         IF    ${IS_AVAILABLE}
             ssh_keywords.Save log   ${GUI_VM}  ${gui_power_log_since}
             ssh_keywords.Save log   ${HOST}    ${gui_power_log_since}
-            Login to laptop         enable_dnd=True
             Save screen recording   ${TEST_STATUS}   ${TEST_NAME}
         END
     ELSE

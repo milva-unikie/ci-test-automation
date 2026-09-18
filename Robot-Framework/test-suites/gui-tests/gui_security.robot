@@ -80,7 +80,6 @@ Account lockout after failed GUI login
     [Teardown]       Run keywords    Unlock account and login
     ...                       AND    Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
     ...                       AND    Soft Reboot Device And Connect
-    ...                       AND    Login to laptop
 
 *** Keywords ***
 
