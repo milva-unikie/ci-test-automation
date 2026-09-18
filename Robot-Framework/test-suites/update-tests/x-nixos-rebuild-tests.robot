@@ -187,7 +187,6 @@ Run Nixos Rebuild
         FAIL  nixos-rebuild didn't finish successfully withing the given time
     END
     Soft Reboot Device And Connect
-    Run Keyword If    ${IS_LAPTOP}    Login to laptop
 
 Clone Ghaf Repository
     [Arguments]               ${repository_path}    ${commit}=${EMPTY}
@@ -213,13 +212,11 @@ Remove Ghaf Repository
 Rebuild Teardown
     IF  '${SUITE_STATUS}'=='FAIL'
         Hard Reboot Device And Connect
-        Run Keyword If    ${IS_LAPTOP}    Login to laptop
     END
     Switch to vm    ${HOST}
     Remove Ghaf Repository
     Roll back to original generation
     Soft Reboot Device And Connect
-    Run Keyword If    ${IS_LAPTOP}    Login to laptop
 
 Check That Logging Is Working in VM
     [Documentation]  Check that the test log is sent to Grafana

@@ -104,7 +104,6 @@ Test setup
 Test teardown
     IF  $TEST_STATUS!='PASS'
         Hard Reboot Device And Connect
-        Login to laptop
     END
     Switch to vm   ${GUI_VM}   user=${USER_LOGIN}
     Save screen recording   ${TEST_STATUS}   ${TEST_NAME} 
