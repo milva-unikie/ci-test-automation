@@ -71,6 +71,8 @@ Reboot from power menu
 
     Should Not Be True    ${elapsed} > ${reboot_limit}    msg=Reboot took too long: ${elapsed} seconds (expected < ${reboot_limit})
 
+    FAIL    Fail on purpose
+
 Shutdown from power menu
     [Documentation]   Shutdown the device via GUI power menu shutdown icon.
     ...               Check that it shuts down and then wakes up with a short power button press.
@@ -93,6 +95,8 @@ Shutdown from power menu
     Login to laptop   enable_dnd=True
 
     Should Not Be True    ${elapsed} > ${max_elapsed}    msg=Shutdown took too long: ${elapsed} seconds (expected < ${max_elapsed})
+
+    FAIL    Fail on purpose
 
 Log out and log in from power menu
     [Documentation]   Logout via GUI power menu icon and verify logged out state.

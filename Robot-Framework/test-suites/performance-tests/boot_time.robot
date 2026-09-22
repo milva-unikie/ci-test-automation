@@ -317,7 +317,7 @@ Detect when power went low
     END
 
 Boot Time Test Teardown
-    IF  $test_status=='FAIL'
+    IF  $test_status=='FAIL' or $test_status=='PASS'
         Hard Reboot Device And Connect
         Switch to vm          ${HOST}
         Log Journal To Debug  boot=-1

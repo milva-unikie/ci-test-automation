@@ -92,6 +92,8 @@ Automatic suspension
         END
     END
 
+    FAIL    Fail on purpose
+
 *** Keywords ***
 
 Test setup

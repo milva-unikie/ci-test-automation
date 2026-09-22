@@ -62,6 +62,7 @@ Check that external ping flooding triggers blacklisting
     External Ping Flood NetVM
     Verify NetVM Blacklist Contains IP Via Serial    ${ext_attacker_ip}
     Clear NetVM Blacklist Via Serial    ${ext_attacker_ip}
+    FAIL    Fail on purpose
     [Teardown]      Run Keyword If Test Failed    Hard Reboot Device And Connect
 
 Check that external tcp syn flooding triggers blacklisting

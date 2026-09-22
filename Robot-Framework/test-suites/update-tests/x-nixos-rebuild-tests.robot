@@ -210,9 +210,7 @@ Remove Ghaf Repository
     Run Command     rm -r ${repository_path}   sudo=True
 
 Rebuild Teardown
-    IF  '${SUITE_STATUS}'=='FAIL'
-        Hard Reboot Device And Connect
-    END
+    Hard Reboot Device And Connect
     Switch to vm    ${HOST}
     Remove Ghaf Repository
     Roll back to original generation

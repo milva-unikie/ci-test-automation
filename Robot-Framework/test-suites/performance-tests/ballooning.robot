@@ -320,6 +320,7 @@ Ballooning Test Teardown
     Run Keyword If Test Failed  Collect Ballooning Logs And Plot
     Run Keyword If Timeout Occurred     Procedure After Timeout
     Run Keyword If   $TEST_STATUS == 'FAIL' and 'SSHException' in $TEST_MESSAGE   Procedure After Timeout
+    Procedure After Timeout
     IF  $rebooted != 'True'
         Clean Ballooning Test Files
     END
