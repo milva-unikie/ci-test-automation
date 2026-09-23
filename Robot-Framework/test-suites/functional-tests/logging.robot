@@ -212,8 +212,8 @@ Check logging rate against history
         IF  '${entries_status}' == 'PASS'
             Set To Dictionary    ${entry_history}    ${vm}=${entries}
         END
+        ${recent_logs}       Run Command        journalctl --since "${check_interval} seconds ago" | grep -v "sshd-session"
         IF  '${entries_status}' == 'PASS' and '${byte_status}' == 'PASS' and (${entries} > ${vm_entry_limit} or ${byte_rate} > ${vm_byte_limit})
-            ${recent_logs}       Run Command        journalctl --since "${check_interval} seconds ago" | grep -v "sshd-session"
             Set To Dictionary    ${spam_logs}       ${vm}=${recent_logs}
             Set To Dictionary    ${spam_metrics}    ${vm}=Entries: ${entries}, Byterate: ${byte_rate}, Limit: ${vm_entry_limit}/${vm_byte_limit}
         ELSE IF  '${entries_status}' == 'PASS' and '${byte_status}' == 'PASS'
