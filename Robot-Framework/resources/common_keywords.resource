@@ -106,17 +106,46 @@ Check that process is not running
         FAIL   Process ${process_name} is ${error_message}
     END
 
+Log process diagnostics
+    [Documentation]    Log process state and kernel wait information for processes matching the full command line.
+    [Arguments]    ${process_name}    ${context}
+    Log    Process diagnostics (${context}): ${process_name}    console=True
+    ${pids}    Run Command    pgrep -f "${process_name}"    return=out    rc_match=skip
+    IF    $pids == '${EMPTY}'
+        Log    No matching processes found while collecting diagnostics    console=True
+        RETURN
+    END
+    @{pids}    Split String    ${pids}
+    FOR    ${pid}    IN    @{pids}
+        Run Command    ps -p ${pid} -o pid,ppid,user,stat,wchan:32,etime,comm,args    rc_match=skip
+        Run Command    readlink /proc/${pid}/exe    rc_match=skip
+        ${logged_in_user}    Run Command         whoami
+        IF    "${logged_in_user}" == "${USER_LOGIN}"
+            Switch to vm   ${GUI_VM}
+            Run Command    cat /proc/${pid}/stack    sudo=True    rc_match=skip    timeout=10
+            Switch to vm   ${GUI_VM}   user=${USER_LOGIN}
+        ELSE
+            Run Command    cat /proc/${pid}/stack    sudo=True    rc_match=skip    timeout=10
+        END
+    END
+
 Kill process by name
     [Arguments]   ${process_name}   ${sudo}=True   ${require_exists}=${True}   ${signal}=TERM   ${fallback_signal}=KILL
     IF    ${require_exists}   Check that process is running   ${process_name}
     Log   Killing process ${process_name} with signal ${signal} (fallback: ${fallback_signal})   console=True
+    Log process diagnostics    ${process_name}    before ${signal}
     # A = ignore pkill process (ancestor), e = display what is killed, f = use full process name to kill
     Run Command    pkill -${signal} -Aef "${process_name}"  sudo=${sudo}  return=rc  rc_match=skip  timeout=15
     ${stopped}   Run Keyword And Return Status   Wait Until Keyword Succeeds   5x   1s   Check that process is not running   ${process_name}
     IF  not ${stopped}
+        Log process diagnostics    ${process_name}    after ${signal}
         Log   Process ${process_name} still running after signal ${signal}, retrying with ${fallback_signal}   console=True
         Run Command    pkill -${fallback_signal} -Aef "${process_name}"  sudo=${sudo}  return=rc  rc_match=skip  timeout=15
         ${stopped}   Run Keyword And Return Status   Wait Until Keyword Succeeds   5x   1s   Check that process is not running   ${process_name}
+        IF    not ${stopped}
+            Log process diagnostics    ${process_name}    after ${fallback_signal}
+            Run Command    journalctl -k -n 100 --no-pager    sudo=True    rc_match=skip    timeout=15
+        END
         Should Be True   ${stopped}   Process ${process_name} is still running after ${signal} and ${fallback_signal}
     END
 
