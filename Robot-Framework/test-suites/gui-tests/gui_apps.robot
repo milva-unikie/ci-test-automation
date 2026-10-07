@@ -195,7 +195,6 @@ Ghaf Control Panel Test Teardown
     Kill App in VM                 ${Ghaf Control Panel}    require_exists=False
     Switch to vm                   ${GUI_VM}    user=${USER_LOGIN}
     Stop screen recording          ${TEST_STATUS}   ${TEST_NAME}
-    Run Keyword If Test Failed     Log Error    Ghaf Control Panel     Ghaf Control Panel test failed
 
 Check Device Information Field
     [Arguments]    ${field}    ${expected}   ${scale}=2   ${precision_percent}=100

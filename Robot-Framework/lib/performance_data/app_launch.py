@@ -52,6 +52,7 @@ class AppLaunchProcessor:
         start_plot((20, 15))
         plt.subplot(1, 1, 1)
         plt.ticklabel_format(axis='y', style='plain')
+        plt.ylim(bottom=0)
 
         for key, value in data.items():
             if key != 'commit':

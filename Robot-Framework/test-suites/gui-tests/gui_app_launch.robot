@@ -15,7 +15,8 @@ Resource            ../../resources/gui_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 
 Test Setup          Start screen recording
-Test Teardown       Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
+Test Teardown       Run Keywords   Switch to vm            ${GUI_VM}   user=${USER_LOGIN}
+...                          AND   Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
 Suite Teardown      GUI App Launch Suite Teardown
 Test Template       Launch App And Save Time
 
@@ -144,8 +145,9 @@ Launch App And Save Time
     [Arguments]    ${app_key}
     Set Test Documentation   Start ${app_key}[display_name] via GUI and measure launch time
     Start app via GUI   ${app_key}
-    Close app via GUI   ${app_key}
+    Close app via GUI   ${app_key}   check_app_process=False
     Save launch time    ${app_key}
+    [Teardown]     Kill App in VM   ${app_key}   status=${KEYWORD_STATUS}   require_exists=False
 
 Create App Launch Montage And Move Graphs
     [Documentation]   Combine all graphs to one image and move the single graphs to their own folder

@@ -156,9 +156,6 @@ Start app via GUI
 
     Check that App is running in VM   ${app_key}   range=10
 
-    [Teardown]    Run Keywords    Switch to vm    ${GUI_VM}  user=${USER_LOGIN}
-    ...           AND             Move cursor to corner
-
 Open app menu
     [Documentation]   Open app menu from the app menu icon
     [Setup]           Switch to vm   ${GUI_VM}  user=${USER_LOGIN}
@@ -175,8 +172,8 @@ Open app menu
 
 Close app via GUI
     [Documentation]    Close Application via GUI and verify related process stopped
-    [Arguments]        ${app_key}   ${verify_is_killed}=True
-    Check that App is running in VM    ${app_key}   range=5
+    [Arguments]        ${app_key}   ${verify_is_killed}=True   ${check_app_process}=True
+    IF   ${check_app_process}    Check that App is running in VM    ${app_key}   range=5
     Switch to vm       ${GUI_VM}  user=${USER_LOGIN}
     Log To Console     Clicking the close button of the application window
     Locate and click   image  ${app_key}[close_button]  0.9  iterations=25  wiggle=True
