@@ -17,13 +17,16 @@ Test Timeout        10 minutes
 
 Test Tags           gui-security
 
+*** Variables ***
+${PROXY}    http://192.168.100.1:3128
+
 *** Test Cases ***
 Check Access List In Trusted Browser
     [Tags]    SP-T362  lenovo-x1  darter-pro
     [Template]    Check Access List In Trusted Browser Template
     # Pages outside access list shouldn't be available via Trusted Browser. Http and https have different errors
-    https://yle.fi                          text_to_find=This site can’t be reached     precision_percent=90
-    http://yle.fi                           text_to_find=Access Denied
+    https://yle.fi                          text_to_find=This site can’t be reached     precision_percent=90    proxy_access_expected=False
+    http://yle.fi                           text_to_find=Access Denied                  proxy_access_expected=False
 
     # Access List consist of several files with multiple sections. These pages are 1 per section.
     https://graph.microsoft.com             text_to_find=Microsoft Graph
@@ -87,7 +90,8 @@ Check Access List In Trusted Browser Template
     ...                If page is blocked by access list, error depends on the protocol used:
     ...                   https: 'This site can’t be reached'
     ...                   http:  'Access Denied'
-    [Arguments]    ${url}   ${text_to_find}   ${precision_percent}=100
+    [Arguments]    ${url}   ${text_to_find}   ${precision_percent}=100   ${proxy_access_expected}=True
+    Run Keyword And Continue On Failure   Check Proxy Access    ${url}    ${proxy_access_expected}
     Start App in VM    ${Trusted Browser}    params_string=-- ${url}    always_check_vm=True
     Switch to vm       ${GUI_VM}    user=${USER_LOGIN}
     Accept Chrome HTTP Warning If Shown    ${url}
@@ -97,6 +101,25 @@ Check Access List In Trusted Browser Template
     ...                             precision_percent=${precision_percent}
 
     [Teardown]    Kill App in VM   ${Trusted Browser}   status=${KEYWORD_STATUS}
+
+Check Proxy Access
+    [Documentation]   Verify that the proxy allows or blocks access to the URL as expected.
+    [Arguments]       ${url}    ${access_expected}=True
+    [Setup]           Switch to vm       ${BUSINESS_VM}
+    ${result}   Run Command   curl -v --fail --connect-timeout 5 --proxy ${PROXY} ${url} -o /dev/null   return=rc   rc_match=skip
+    IF    ${access_expected}
+        Should Be Equal As Integers   ${result}[0]   0   Proxy unexpectedly blocked access to ${url}
+    ELSE
+        Should Not Be Equal As Integers   ${result}[0]   0   Proxy unexpectedly allowed access to ${url}
+    END
+    [Teardown]    Run Keyword If   '${KEYWORD_STATUS}' == 'FAIL'   Collect whitelist debug logs
+
+Collect whitelist debug logs
+    [Setup]      Switch to vm    ${NET_VM}
+    Run Command   cat /etc/3proxy/ghaf_whitelist.txt   sudo=True
+    Run Command   cat /etc/3proxy/ghaf_whitelist.txt   sudo=True
+    Run Command   journalctl -b -u ghafFetchUrl.service
+    [Teardown]   Switch to vm    ${BUSINESS_VM}
 
 Account lockout Teardown
     Unlock account and login
