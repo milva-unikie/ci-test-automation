@@ -3,23 +3,19 @@
 
 *** Settings ***
 Documentation       Check killswitch functionality
-Test Tags           killswitch  lenovo-x1  darter-pro
+Test Tags           killswitch  bat  lenovo-x1  darter-pro
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/audio_and_video_keywords.resource
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/gui-vm_keywords.resource
 Resource            ../../resources/wifi_keywords.resource
 
-*** Variables ***
-
-${AUDIO_DIR}    ${OUTPUT_DIR}/outputs/audio-temp
-
 
 *** Test Cases ***
 
 Killswitch disconnects camera
     [Documentation]  Check that camera works, then block it using killswitch and verify that it doesn't work
-    [Tags]           SP-T435  bat
+    [Tags]           SP-T435
     [Setup]           Attach integrated camera   ${BUSINESS_VM}
     Check camera      ${BUSINESS_VM}  expected=True
     Set device state  blocked         cam
@@ -28,7 +24,7 @@ Killswitch disconnects camera
 
 Killswitch disconnects microphone
     [Documentation]  Check that microphone works, then block it using killswitch and verify that it doesn't work
-    [Tags]           SP-T436  bat
+    [Tags]           SP-T436
     Record Audio And Verify   ${BUSINESS_VM}
     Set device state  blocked    mic
     Record Audio And Verify   ${BUSINESS_VM}    expected_duration=0
@@ -36,7 +32,7 @@ Killswitch disconnects microphone
 
 Killswitch blocks all devices at once
     [Documentation]  Verify that ghaf-killswitch block --all and unblock --all change all device states
-    [Tags]           SP-T368  bat  lab-only
+    [Tags]           SP-T368  lab-only
     Set all devices state      blocked
     Verify all devices state   blocked
     Set all devices state      unblocked

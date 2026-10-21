@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Checking retention policies
-Test Tags           retention
+Test Tags           retention  bat
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/ssh_keywords.resource
 Resource            ../../resources/device_control.resource

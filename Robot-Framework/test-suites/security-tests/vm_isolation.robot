@@ -30,7 +30,7 @@ Stopping one VM does not affect others
 
 VM Nix store matches its provided closure
     [Documentation]    Compare each VM's visible store paths with the paths provided to its MicroVM process
-    [Tags]             SP-T505  excl-storeDisk
+    [Tags]             SP-T505  bat  excl-storeDisk
     [Template]         VM Nix store matches its provided closure
     FOR    ${vm}    IN    @{VM_LIST}
         ${vm}
@@ -38,7 +38,7 @@ VM Nix store matches its provided closure
 
 Host system path is not visible in VMs
     [Documentation]    Verify that the host's current system closure root does not leak into any VM
-    [Tags]             SP-T506  excl-storeDisk
+    [Tags]             SP-T506  bat  excl-storeDisk
     [Setup]            Set Host system path
     [Template]         Host system path is not visible in VMs
     FOR    ${vm}    IN    @{VM_LIST}
@@ -47,7 +47,7 @@ Host system path is not visible in VMs
 
 VM store paths are not available in other VMs
     [Documentation]    Verify that store paths do not leak from one VM to another
-    [Tags]             SP-T507  excl-storeDisk
+    [Tags]             SP-T507  bat  excl-storeDisk
     [Template]         VM store paths are not available in other VMs
     ${App Store}
     ${COSMIC System Monitor}

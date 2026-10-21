@@ -8,6 +8,10 @@ Library             ../lib/output_parser.py
 Library             DateTime
 Library             String
 
+*** Variables ***
+${AUDIO_DIR}    ${OUTPUT_DIR}/outputs/audio
+
+
 *** Keywords ***
 
 Check camera

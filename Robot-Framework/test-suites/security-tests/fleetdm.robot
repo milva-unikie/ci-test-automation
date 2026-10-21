@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Test device visibility in fleetdm
-Test Tags           fleetdm  lenovo-x1  darter-pro  lab-only
+Test Tags           fleetdm  bat  lenovo-x1  darter-pro  lab-only
 
 Library             Process
 Library             String

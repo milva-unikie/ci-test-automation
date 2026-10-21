@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Testing files sharing among VMs
-Test Tags           SP-T198  shares  bat  lenovo-x1  darter-pro  dell-7330
+Test Tags           shares  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/ssh_keywords.resource

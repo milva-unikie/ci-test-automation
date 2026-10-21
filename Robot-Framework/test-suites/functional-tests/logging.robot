@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Testing logging
-Test Tags           logging  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx
+Test Tags           logging  pre-merge  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx
 
 Library             DateTime
 Library             OperatingSystem

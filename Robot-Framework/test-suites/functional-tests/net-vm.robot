@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Testing Network VM
-Test Tags           net-vm  bat
+Test Tags           net-vm
 
 Resource            ../../resources/common_keywords.resource
 Resource            ../../resources/file_keywords.resource

@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Testing launching files
-Test Tags           files  bat  lenovo-x1  darter-pro  dell-7330
+Test Tags           files  pre-merge  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/app_keywords.resource
 Resource            ../../resources/common_keywords.resource
@@ -18,7 +18,7 @@ ${OUTPUT_FILE}   /tmp/out.log
 
 Open PDF from chrome-vm
     [Documentation]    Open PDF file from ${CHROME_VM} and check that ${Ghaf Isolated Document Viewer}[display_name] started
-    [Tags]             SP-T383  pre-merge
+    [Tags]             SP-T383
     Open PDF from app-vm    ${CHROME_VM}
 
 Open PDF from comms-vm
@@ -38,7 +38,7 @@ Open PDF from gui-vm
 
 Open image with Ghaf Isolated Image Viewer
     [Documentation]    Open PNG image from ${GUI_VM} and check that ${Ghaf Isolated Image Viewer}[display_name] started
-    [Tags]             SP-T197  pre-merge
+    [Tags]             SP-T197
     Switch to vm       ${GUI_VM}  user=${USER_LOGIN}
     Run Command        WAYLAND_DISPLAY=wayland-1 grim ./screenshot.png   timeout=5
     Open file with XDG handler   ./screenshot.png   sudo=False
@@ -65,7 +65,7 @@ Open video with COSMIC Media Player
 
 Open text file with COSMIC Text Editor
     [Documentation]    Open text file and check that ${COSMIC Text Editor}[display_name] started
-    [Tags]             SP-T262  pre-merge
+    [Tags]             SP-T262
     Switch to vm       ${GUI_VM}  user=${USER_LOGIN}
     Create text file   test    /tmp/test_text.txt
     Open file to gui-vm with XDG handler    /tmp/test_text.txt

@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Common system tests on host
-Test Tags           host
+Test Tags           host  pre-merge
 
 Library             ../../lib/output_parser.py
 Resource            ../../resources/common_keywords.resource
@@ -19,7 +19,7 @@ Suite Setup         Switch to vm   ${HOST}
 Check device id
     [Documentation]    Compare actual device id with expected one from the config file,
     ...                It should never change.
-    [Tags]             SP-T467  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  lab-only
+    [Tags]             SP-T467  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  lab-only
     ${actual_device_id}          Get Actual Device ID
     Log                Comparing actual device ID ${actual_device_id} and expected ${STATIC_DEVICE_ID}     console=True
     Should Be Equal As Strings   ${actual_device_id}    ${STATIC_DEVICE_ID}    ignore_case=True
@@ -29,23 +29,23 @@ Check device id
 Test ghaf version format
     [Documentation]    Test getting Ghaf version and verify its format:
     ...                Expected format: major.minor.yyyymmdd.commit_hash
-    [Tags]             SP-T54  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  fmo
+    [Tags]             SP-T54  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  fmo
     Verify Ghaf Version Format
 
 Test nixos version format
     [Documentation]    Test getting Nixos version and verify its format:
     ...                Expected format: major.minor.yyyymmdd.commit_hash (name)
-    [Tags]             SP-T55  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  fmo
+    [Tags]             SP-T55  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  fmo
     Verify Nixos Version Format
 
 Check QSPI version
     [Documentation]    QSPI version should be up-to-date
-    [Tags]             SP-T95  pre-merge  bat  orin-agx  orin-agx-64  orin-nx
+    [Tags]             SP-T95  orin-agx  orin-agx-64  orin-nx
     Check QSPI Version is up to date
 
 Check all VMs are running
     [Documentation]    Check that all VMs are running.
-    [Tags]             SP-T502  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  fmo
+    [Tags]             SP-T502  lenovo-x1  darter-pro  dell-7330  fmo
     @{vms}      Get VM list
     FOR   ${vm}  IN  @{vms}
         ${status}=    Run Keyword And Continue On Failure    Verify service status  service=microvm@${vm}
@@ -53,7 +53,7 @@ Check all VMs are running
 
 Check all VMs are running on Orins
     [Documentation]    Check that all VMs are running.
-    [Tags]             SP-T503  pre-merge  bat  orin-agx  orin-agx-64  orin-nx
+    [Tags]             SP-T503  orin-agx  orin-agx-64  orin-nx
     Switch to vm    ${HOST}
     ${output}       Run Command        microvm -l
     ${output}       Replace String Using Regexp    ${output}    \x1b\\[[0-9;]*m    ${EMPTY}
@@ -65,7 +65,7 @@ Check all VMs are running on Orins
 
 Check serial connection
     [Documentation]    Check serial connection
-    [Tags]             SP-T170  pre-merge  bat  lenovo-x1  darter-pro  orin-agx  orin-agx-64  orin-nx  lab-only
+    [Tags]             SP-T170  lenovo-x1  darter-pro  orin-agx  orin-agx-64  orin-nx  lab-only
     [Setup]            Serial setup
     Log    Reading serial console...     console=True
     FOR    ${i}    IN RANGE    30
@@ -81,7 +81,7 @@ Check serial connection
 
 Check storage size
     [Documentation]  Check that there is enough persistent storage available
-    [Tags]           SP-T342  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx
+    [Tags]           SP-T342  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx
     ${total_storage}       Check Boot Disk Size
     ${persistent_storage}  Check Persistent Storage Size
     Should Be True  ${total_storage} > ${persistent_storage} > ${100}

@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Functional tests
-Test Tags           regression  functional
+Test Tags           bat  regression  functional
 
 Resource            ../../resources/setup_keywords.resource
 

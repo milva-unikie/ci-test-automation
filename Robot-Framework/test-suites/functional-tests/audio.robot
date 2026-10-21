@@ -3,7 +3,7 @@
 
 *** Settings ***
 Documentation       Testing audio
-Test Tags           audio  bat  lenovo-x1  darter-pro  dell-7330
+Test Tags           audio  pre-merge  lenovo-x1  darter-pro  dell-7330
 
 Resource            ../../resources/file_keywords.resource
 Resource            ../../resources/audio_and_video_keywords.resource
@@ -14,22 +14,20 @@ Test Timeout        3 minutes
 
 
 *** Variables ***
-
-${AUDIO_DIR}           ${OUTPUT_DIR}/outputs/audio-temp
 @{VMS_WITH_AUDIO}      ${BUSINESS_VM}  ${CHROME_VM}  ${COMMS_VM}  ${FLATPAK_VM}  ${GUI_VM}
 @{VMS_WITHOUT_AUDIO}   ${AUDIO_VM}  ${ADMIN_VM}  ${HOST}  ${MEDIA_VM}  ${NET_VM}
 
 
 *** Test Cases ***
 Record audio in all VMs with audio
-    [Tags]   SP-T247  pre-merge
+    [Tags]   SP-T247
     [Template]  Record Audio And Verify
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
         ${vm}
     END
 
 Play audio in all VMs with audio
-    [Tags]   SP-T212  pre-merge
+    [Tags]   SP-T212
     [Template]   Play Audio And Verify
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
         ${vm}
@@ -37,7 +35,7 @@ Play audio in all VMs with audio
 
 Check Audio devices
     [Documentation]  List audio sinks and sources in VMs
-    [Tags]      SP-T246  pre-merge
+    [Tags]      SP-T246
     # VMs with audio
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
         IF   '$vm' == '${GUI_VM}'
@@ -59,7 +57,7 @@ Check Audio devices
 
 Check audio server
     [Documentation]  Check that audio server is available in correct VMs
-    [Tags]      SP-T350  pre-merge
+    [Tags]      SP-T350
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
         IF   '$vm' == '${GUI_VM}'
             Switch to vm   ${vm}   ${USER_LOGIN}
