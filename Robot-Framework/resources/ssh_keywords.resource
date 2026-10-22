@@ -16,6 +16,7 @@ Resource            ../resources/serial_keywords.resource
 
 ${NETVM_NAME}       ${EMPTY}
 ${NETVM_SYNTAX}     ghaf-[0-9]{10}
+${GUI_VM_SYNTAX}    (?:${GUI_VM}|dev-${NETVM_SYNTAX})
 
 
 *** Keywords ***
@@ -204,6 +205,8 @@ Login with timeout
             ${netvm_name}        Get Regexp Matches    ${login_output}    ${NETVM_SYNTAX}
             Set Global Variable  ${NETVM_NAME}    ${netvm_name}[0]
         END
+    ELSE IF    '${expected_output}' == '${GUI_VM}'
+        ${status}  ${output}  Run Keyword And Ignore Error   Should Match Regexp    ${login_output}    ${GUI_VM_SYNTAX}
     ELSE
         ${status}  ${output}  Run Keyword And Ignore Error   Should Contain   ${login_output}   ${expected_output}
     END
@@ -406,6 +409,7 @@ Transfer Shell Script To VM
 
 Elevate to superuser
     [Arguments]    ${sleep}=0.5
+    Log      Elevating to superuser   console=True
     SSHLibrary.Read
     Write                 sudo su
     Sleep                 ${sleep}
@@ -416,6 +420,7 @@ Elevate to superuser
         ${out}            SSHLibrary.Read
     END
     IF  'root@' in $out
+        Log           Successfully elevated to superuser   console=True
         RETURN
     END
     FAIL              Elevating to superuser failed
