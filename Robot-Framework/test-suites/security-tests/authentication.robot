@@ -4,18 +4,24 @@
 *** Settings ***
 Documentation       Test user authentication
 
+Resource            ../../resources/active-directory.resource
 Resource            ../../resources/ssh_keywords.resource
 
-Test Tags           authentication  lenovo-x1  darter-pro
+Test Tags           authentication  lenovo-x1  darter-pro  lab-only
 
 *** Test Cases ***
 
 Use recovery key to login
     [Documentation]    Get the recovery key from user provisioning logs and use it to log in to gui-vm.
-    [Tags]             SP-T302  lab-only
+    [Tags]             SP-T302
     Connect to GUI VM with recovery key
     Verify recovery key SSH login
 
+Confirm Active Directory connectivity with homed user
+    [Documentation]    Navigate the interactive provisioning script and exit after its AD connectivity success message.
+    [Tags]             SP-T520
+    [Setup]            Switch to vm  ${GUI_VM}
+    Check AD Connectivity Through User Provisioning    Enroll AD user to homed    move_down=${True}
 
 *** Keywords ***
 
