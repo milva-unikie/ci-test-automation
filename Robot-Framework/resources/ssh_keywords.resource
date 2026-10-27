@@ -390,6 +390,17 @@ Try to switch to active vm connection
         RETURN   True
     END
 
+Switch to vm with user access
+    [Documentation]    Switch to ${vm}; use the logged-in GUI user and disable sudo for GUI commands.
+    [Arguments]    ${vm}    ${sudo}=True
+    IF    '${vm}' == '${GUI_VM}'
+        Switch to vm    ${vm}    user=${USER_LOGIN}
+        ${sudo}    Set Variable    False
+    ELSE
+        Switch to vm    ${vm}
+    END
+    RETURN    ${sudo}
+
 Get VM IP
     [Arguments]   ${if_name}=eth
     ${output}     Run Command    ifconfig

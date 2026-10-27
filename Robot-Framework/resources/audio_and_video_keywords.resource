@@ -51,12 +51,7 @@ Record Audio And Verify
     [Documentation]  Record short audio with pulseaudio tool.
     ...    Verify audio clip is longer than ${expected_duration}, has higher bitrate than ${expected_bitrate} and higher mean volume than ${volume_limit}.
     [Arguments]      ${vm}  ${audiofile}=record_${vm}.wav  ${expected_bitrate}=1000  ${expected_duration}=2  ${volume_limit}=-40  ${sudo}=True
-    IF   '${vm}' == '${GUI_VM}'
-        Switch to vm   ${vm}  ${USER_LOGIN}
-        ${sudo}        Set Variable   False
-    ELSE
-        Switch to vm   ${vm}
-    END
+    ${sudo}             Switch to vm and set sudo for GUI    ${vm}    ${sudo}
     Log To Console         Recording audio file
     Run Command            sh -c 'parecord -r /tmp/${audiofile} & sleep 5 && pkill parecord && chown ghaf:ghaf /tmp/${audiofile}'    sudo=${sudo}   timeout=15   rc_match=skip
     SSHLibrary.Get File    /tmp/${audiofile}  ${AUDIO_DIR}/${audiofile}
@@ -70,15 +65,12 @@ Record Audio And Verify
 Play Audio And Verify
     [Documentation]  Play ${sample_file} in ${vm} and record the audio output to ${record_file} with monitor microphone.
     ...   Verify that the mean volume of ${sample_file} and ${record_file} is within ${tolerance} and that the mean volume of ${sample_file} is higher than ${volume_limit}.
-    [Arguments]     ${vm}  ${record_file}=play_${vm}.wav  ${sample_file}=wind.wav  ${tolerance}=2.0  ${volume_limit}=-30  ${sudo}=True
+    [Arguments]     ${vm}  ${record_file}=play_${vm}.wav  ${sample_file}=wind.wav  ${tolerance}=2.0  ${volume_limit}=-30
     Switch to vm    ${vm}
     Put File        ../test-files/${sample_file}   /tmp
     Remove file     /tmp/${record_file}    sudo=True  rc_match=skip
     ${duration}     Get Duration   ../test-files/${sample_file}
-    IF   '${vm}' == '${GUI_VM}'
-        Switch to vm   ${vm}  ${USER_LOGIN}
-        ${sudo}        Set Variable   False
-    END
+    ${sudo}         Switch to vm and set sudo for GUI    ${vm}    ${sudo}
     ${sources}      Run Command    pactl list short sources
     ${source_id}    Get Monitor Microphone Source    ${sources}
 
@@ -92,6 +84,25 @@ Play Audio And Verify
     Compare Mean Volumes      ../test-files/${sample_file}   ${AUDIO_DIR}/${record_file}   ${tolerance}
 
     [Teardown]   Remove file   /tmp/${record_file}   sudo=${sudo}
+
+Start Audio Recording
+    [Documentation]  Start recording audio from the monitor source in ${vm}.
+    [Arguments]      ${vm}  ${record_file}
+    ${sudo}          Switch to vm with user access   ${vm}   sudo=True
+    Remove file     /tmp/${record_file}    sudo=${sudo}    rc_match=skip
+    ${sources}      Run Command    pactl list short sources    sudo=${sudo}
+    ${source_id}    Get Monitor Microphone Source    ${sources}
+    Run Command     sh -c 'nohup parecord -r /tmp/${record_file} -d ${source_id} </dev/null >/tmp/${record_file}.log 2>&1 & echo $! > /tmp/${record_file}.pid'    sudo=${sudo}
+
+Stop Audio Recording And Verify
+    [Documentation]  Stop the recording, download it, and verify its duration and mean volume.
+    [Arguments]      ${vm}  ${record_file}  ${expected_duration}=2  ${volume_limit}=-40
+    ${sudo}          Switch to vm with user access   ${vm}   sudo=True
+    Run Command     sh -c 'kill "$(cat /tmp/${record_file}.pid)"; rm -f /tmp/${record_file}.pid'    sudo=${sudo}
+    SSHLibrary.Get File    /tmp/${record_file}    ${AUDIO_DIR}/${record_file}
+    Check Audio Duration    ${AUDIO_DIR}/${record_file}    ${expected_duration}
+    Check Mean Volume Level    ${AUDIO_DIR}/${record_file}    ${volume_limit}
+    [Teardown]      Remove file    /tmp/${record_file}    sudo=${sudo}    rc_match=skip
 
 Get Mean Volume
     [Arguments]   ${file}   ${log}=True

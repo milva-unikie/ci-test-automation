@@ -40,11 +40,7 @@ Check Audio devices
     [Tags]      SP-T246  pre-merge
     # VMs with audio
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
-        IF   '$vm' == '${GUI_VM}'
-            Switch to vm   ${vm}   ${USER_LOGIN}
-        ELSE
-            Switch to vm   ${vm}
-        END
+        Switch to vm with user access   ${vm}
         ${sources}   Run Command  pactl list sources
         ${sinks}     Run Command  pactl list sinks
         Run Keyword And Continue On Failure   Should Contain   ${sources}   Source   ${vm} does not have Sources
@@ -61,11 +57,7 @@ Check audio server
     [Documentation]  Check that audio server is available in correct VMs
     [Tags]      SP-T350  pre-merge
     FOR  ${vm}  IN  @{VMS_WITH_AUDIO}
-        IF   '$vm' == '${GUI_VM}'
-            Switch to vm   ${vm}   ${USER_LOGIN}
-        ELSE
-            Switch to vm   ${vm}
-        END
+        Switch to vm with user access   ${vm}
         ${server}   Run Command   echo $PULSE_SERVER
         Run Keyword And Continue On Failure   Should Not Be Empty   ${server}
     END

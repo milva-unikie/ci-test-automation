@@ -206,6 +206,10 @@
     "app_id": "chrome-outlook.office.com__mail_-Default",
     "close_button": "window-close-neg.png"
   },
+  "Screen Reader": {
+    "VM": "gui-vm",
+    "process_name": "orca"
+  },
   "Slack": {
     "display_name": "Slack",
     "VM": "comms-vm",

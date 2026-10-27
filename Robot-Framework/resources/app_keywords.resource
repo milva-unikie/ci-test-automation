@@ -149,14 +149,12 @@ Start application
 
 Check that App is running in VM
     [Arguments]    ${app_key}   ${range}=2
-    ${user}        Set Variable If   '${app_key}[VM]' == '${GUI_VM}'   ${USER_LOGIN}   ghaf
-    Switch to vm   ${app_key}[VM]   user=${user}
+    Switch to vm with user access   ${app_key}[VM]
     Wait Until Keyword Succeeds    ${range}x    1s   Check that process is running   ${app_key}[process_name]
 
 Check that App is not running in VM
     [Arguments]   ${app_key}   ${range}=2   ${before_launch_check}=False
-    ${user}              Set Variable If   '${app_key}[VM]' == '${GUI_VM}'   ${USER_LOGIN}   ghaf
-    Switch to vm         ${app_key}[VM]   user=${user}
+    Switch to vm with user access   ${app_key}[VM]
     ${error_message}     Set Variable If      ${before_launch_check}   already running    still running
     Wait Until Keyword Succeeds    ${range}x    1s    Check that process is not running    ${app_key}[process_name]    ${error_message}
 
@@ -170,18 +168,15 @@ Log and remove app output
 Log app vm journalctl
     [Documentation]    Log journalctl from ${app_key}[VM]
     [Arguments]   ${app_key}
-    ${user}       Set Variable If   '${app_key}[VM]' == '${GUI_VM}'   ${USER_LOGIN}   ghaf
-    Switch to vm  ${app_key}[VM]  user=${user}
+    Switch to vm with user access   ${app_key}[VM]
     Run Command   journalctl -b
 
 Kill App in VM
     [Documentation]   Connects to app-vm and kills app ${app_key}[display_name].
     ...    Use after "Start application in VM", call this keyword from the test teardown.
     [Arguments]   ${app_key}   ${log_file}=None   ${status}=${TEST_STATUS}   ${require_exists}=True
-    ${user}      Set Variable If      '${app_key}[VM]' == '${GUI_VM}'     ${USER_LOGIN}   ghaf
-    ${sudo}      Set Variable If      '${app_key}[VM]' == '${GUI_VM}'     False           True
+    ${sudo}      Switch to vm with user access   ${app_key}[VM]
 
-    Switch to vm    ${app_key}[VM]    user=${user}
     # Capture D-state diagnostics before cleanup when a GUI application failed to start.
     IF    '${status}' == 'FAIL' and '${app_key}[VM]' == '${GUI_VM}'
         Run Keyword And Ignore Error    Log blocked process diagnostics

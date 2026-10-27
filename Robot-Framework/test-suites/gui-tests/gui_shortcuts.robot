@@ -3,15 +3,16 @@
 
 
 *** Settings ***
-Documentation       Tests for input-related GUI functionality
+Documentation       Tests for shortcuts
 
+Resource            ../../resources/audio_and_video_keywords.resource
 Resource            ../../resources/gui-vm_keywords.resource
 Resource            ../../resources/gui_keywords.resource
 
 Test Setup          Start screen recording
 Test Teardown       Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
 
-Test Tags           gui-input  lenovo-x1  darter-pro
+Test Tags           gui-shortcuts  lenovo-x1  darter-pro
 
 
 *** Test Cases ***
@@ -59,3 +60,20 @@ Control audio volume with keyboard shortcuts
 
     ${vol_after_mute}    Get volume level
     Should Be Equal      ${vol_after_mute}    ${volume_down}    Volume level after mute status changing is different
+
+Enable COSMIC screen reader
+    [Documentation]    Verify that enabling the COSMIC screen reader produces audible output.
+    [Tags]             sr
+    ${record_file}     Set Variable    screen_reader.wav
+    Check that App is not running in VM   ${Screen Reader}   range=1
+    Start Audio Recording    ${GUI_VM}    ${record_file}
+    Wait                     3
+    Press Key(s)             LEFTMETA+LEFTALT+S  # Shortcut to start/stop screen reader
+    Check that App is running in VM   ${Screen Reader}   range=5
+    Wait                     3
+    Press Key(s)             LEFTMETA+LEFTALT+S
+    Check that App is not running in VM   ${Screen Reader}   range=5
+    Stop Audio Recording And Verify    ${GUI_VM}    ${record_file}    expected_duration=5    volume_limit=-40
+    [Teardown]     Run Keywords   Switch to vm    ${GUI_VM}    ${USER_LOGIN}
+    ...                     AND   Stop screen recording   ${TEST_STATUS}   ${TEST_NAME}
+    ...                     AND   Run Keyword If Test Failed    Kill App in VM   ${Screen Reader}
