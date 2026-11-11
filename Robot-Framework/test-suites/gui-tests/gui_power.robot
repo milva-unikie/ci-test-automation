@@ -60,7 +60,13 @@ Reboot from power menu
     [Documentation]   Reboot the device via GUI power menu reboot icon.
     ...               Check that it shuts down. Check that it turns on and boots to login screen.
     [Tags]            SP-T494  lenovo-x1  darter-pro  lab-only
-    Select power menu option   x=870   y=120   confirmation=True
+    # Select power menu option   x=870   y=120   confirmation=True
+
+    Switch to vm    ${GUI_VM}
+    Run Command     systemctl stop givc-gui-vm.service   sudo=True
+    Switch to vm    ${HOST}
+    Run Command     reboot    sudo=True   rc_match=skip
+
     ${start_time}     Get Time    epoch
     Verify shutdown via network
     Connect After Reboot   soft_reboot=True
@@ -71,7 +77,7 @@ Reboot from power menu
     Log               Reboot took ${elapsed} seconds   console=True
 
     IF    ${elapsed} > ${reboot_limit}
-        Skip If Gui-vm Timed Out On Previous Boot
+        Skip If Gui-vm Timed Out On Previous Boot   message=Reboot took too long: ${elapsed} seconds (expected < ${reboot_limit})
     END
     Should Not Be True    ${elapsed} > ${reboot_limit}    msg=Reboot took too long: ${elapsed} seconds (expected < ${reboot_limit})
 
@@ -93,12 +99,12 @@ Shutdown from power menu
     ELSE
         Wait          20
     END
-    Turn Laptop On
+    # Turn Laptop On
     Connect After Reboot
     Login to laptop
 
     IF    ${elapsed} > ${max_elapsed}
-        Skip If Gui-vm Timed Out On Previous Boot
+        Skip If Gui-vm Timed Out On Previous Boot   message=Shutdown took too long: ${elapsed} seconds (expected < ${max_elapsed})
     END
     Should Not Be True    ${elapsed} > ${max_elapsed}    msg=Shutdown took too long: ${elapsed} seconds (expected < ${max_elapsed})
 
@@ -155,12 +161,13 @@ GUI Power Test Teardown
     END
 
 Skip If Gui-vm Timed Out On Previous Boot
-    [Documentation]    Check if SSRCSP-9231 caused extended shutdown/reboot and skip the test if it did.
-    Switch to vm    ${HOST}
+    [Documentation]   Check if SSRCSP-9231 caused extended shutdown/reboot and skip the test if it did.
+    [Arguments]       ${message}
+    Switch to vm      ${HOST}
     ${timeout_log}    Run Command
     ...    journalctl -b -1 --no-pager | grep -F "microvm@gui-vm.service: Failed with result 'timeout'."
     ...    sudo=True    rc_match=skip
     IF    $timeout_log != ''
         Log Error    Gui-vm timeout    gui-vm timed out during the previous boot
-        SKIP    Known issue: SSRCSP-9231 (gui-vm timed out during the previous boot)
+        SKIP    Known issue: SSRCSP-9231 (gui-vm timed out during the previous boot) (${message})
     END
