@@ -139,11 +139,7 @@ Soft Reboot Device
     Close All Connections
 
 Soft Shutdown Device
-    IF  ${IS_LAPTOP}
-        Switch to vm          ${GUI_VM}
-    ELSE
-        Switch to vm          ${HOST}
-    END
+    Switch to vm          ${GUI_VM}
     Log To Console        Shutting down device from command line
     Run Command           shutdown now    sudo=True    rc_match=skip
 
