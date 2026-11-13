@@ -36,6 +36,7 @@ Wait For AD Connectivity Result
     [Documentation]    Keep terminal output in the keyword log and report a concise connectivity failure.
     TRY
         SSHLibrary.Read Until    AD server reachable:
+        SSHLibrary.Read Until    LDAP server reachable:
     EXCEPT    *Cannot connect to AD backend*    type=GLOB
         FAIL    User provisioning could not connect to the configured LDAP/LDAPS backend
     EXCEPT    *Cannot reach AD server:*    type=GLOB

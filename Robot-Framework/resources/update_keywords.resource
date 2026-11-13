@@ -135,12 +135,12 @@ Run Nixos Rebuild
     Soft Reboot Device And Connect   login=${login}
 
 Clone Ghaf Repository
-    [Arguments]               ${repo_path}=${REPOSITORY_PATH}    ${commit}=${EMPTY}
+    [Arguments]               ${repo_path}=${REPOSITORY_PATH}    ${commit}=feat/firewall-source-restricted-ports
     Log To Console            Cloning ghaf repository
     # In case repository already exists (from earlier test runs) remove it
     Run Keyword And Ignore Error    Remove Ghaf Repository
     SSHLibrary.Read
-    Write                     git clone https://github.com/tiiuae/ghaf.git ${repo_path}
+    Write                     git clone https://github.com/enesoztrk/ghaf.git ${repo_path}
     SSHLibrary.Read Until     Cloning
     Wait Until Keyword Succeeds    120s    1s    SSHLibrary.Read Until     [nix-shell:
     Sleep                     0.5
@@ -148,7 +148,7 @@ Clone Ghaf Repository
     IF  $commit != '${EMPTY}' and $commit != 'NONE'
         Log                       Checking out commit ${commit}  console=True
         Write                     git checkout ${commit}
-        SSHLibrary.Read Until     HEAD is now at
+        # SSHLibrary.Read Until     HEAD is now at
         SSHLibrary.Read Until     [nix-shell:
     END
 
