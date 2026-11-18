@@ -57,6 +57,7 @@ Check net-vm hostname
     Log                Comparing actual net-vm hostname ${NETVM_NAME} and expected ${STATIC_NETVM_NAME}     console=True
     Should Be Equal As Strings   ${NETVM_NAME}    ${STATIC_NETVM_NAME}    ignore_case=True
     ...                          msg=Actual NetVM hostname != Expected
+    FAIL    Fail on purpose
     [Teardown]         Run Keyword If Test Failed    Check net-vm hostname failure
 
 Verify native ethernet is present and in the same network as USB ethernet

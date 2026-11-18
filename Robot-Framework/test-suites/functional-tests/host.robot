@@ -25,6 +25,7 @@ Check device id
     Log                Comparing actual device ID ${actual_device_id} and expected ${STATIC_DEVICE_ID}     console=True
     Should Be Equal As Strings   ${actual_device_id}    ${STATIC_DEVICE_ID}    ignore_case=True
     ...                          msg=Actual device ID != Expected
+    FAIL    Fail on purpose
     [Teardown]         Run Keyword If Test Failed    Check device id failure    ${actual_device_id}
 
 Test ghaf version format
