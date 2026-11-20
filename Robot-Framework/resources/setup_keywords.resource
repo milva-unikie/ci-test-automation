@@ -26,7 +26,7 @@ Prepare Test Environment
     Log versions and device unique data
     IF  ${IS_LAPTOP}
         Verify boot from expected device
-        Create test user
+        Create user
         Save login and logout icons
         Login to laptop
     END
@@ -94,19 +94,46 @@ Log versions and device unique data
     Log                 Test run job variable: ${JOB}      console=True
     Log                 --------                           console=True
 
-Create test user
-    [Documentation]      Check if ${USER_LOGIN} already exists and if not create testuser
+Create user
+    [Documentation]      Check if ${USER_LOGIN} already exists and if not create it
     [Setup]              Switch to vm    ${GUI_VM}
     TRY
         Run Command      id -u ${USER_LOGIN}
-    EXCEPT
-        Should Be Equal  ${USER_LOGIN}   testuser   Create user ${USER_LOGIN} manually before running tests or use default username and password
-        Log To Console   Creating testuser
-        Run Command      systemctl start user-provision-test.service   sudo=True
+    EXCEPT   *no such user*   type=GLOB
+        Provision user confidentially
         Run Command      id -u ${USER_LOGIN}
     ELSE
         Log              User ${USER_LOGIN} already exists   console=True
     END
+
+Provision user confidentially
+    [Documentation]        Run user-provision with its password entered through hidden terminal input.
+    [Setup]                Switch to vm    ${GUI_VM}
+    TRY
+        ${previous_log_level}    Set Log Level    NONE
+        Elevate to superuser
+        Log                    Creating user ${USER_LOGIN}    console=True
+        ${provision_command}   Set Variable   user-provision --non-interactive --username '${USER_LOGIN}' --realname '${USER_LOGIN}' --password "$CONFIDENTIAL_INPUT"
+        ${provision_output}    Run Command With Confidential Input    ${USER_PASSWORD}    ${provision_command}    ready_prompt=root@
+        Should Contain         ${provision_output}   User creation completed
+        Log                    Created user ${USER_LOGIN}     console=True
+        Run Keyword And Ignore Error    Save Recovery Key    ${provision_output}
+    EXCEPT
+        FAIL    Failed to create user; details hidden to protect credentials.
+    FINALLY
+        Run Keyword And Ignore Error   SSHLibrary.Write       exit
+        Run Keyword And Ignore Error   SSHLibrary.Read Until  ${LOGIN}@
+        Set Log Level      ${previous_log_level}
+        Run Command        systemctl stop user-provision-interactive.service   sudo=True
+    END
+
+Save Recovery Key
+    [Documentation]    Extract the recovery key from user-provision output and write it to gui-vm.
+    [Arguments]        ${provision_output}
+    ${recovery_key}    Get Regexp Matches    ${provision_output}    [a-z-]{71}
+    Should Not Be Empty    ${recovery_key}    Recovery key was not found in user-provision output
+    ${key_command}    Set Variable    printf '%s' "$CONFIDENTIAL_INPUT" > /root/recovery-key
+    Run Command With Confidential Input    ${recovery_key}[0]    ${key_command}    ready_prompt=root@
 
 Start ydotoold
     [Documentation]    Start ydotool daemon if it is not already running.
