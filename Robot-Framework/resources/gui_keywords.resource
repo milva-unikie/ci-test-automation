@@ -29,10 +29,7 @@ ${YDOTOOL_SOCKET}      /tmp/.ydotool_socket
 *** Keywords ***
 Log in, unlock and verify
     [Documentation]   Open desktop by logging in or unlocking. Verify that desktop is available.
-    # A single probe cannot tell "a user is logged in" from "greetd has restarted
-    # and the greeter session has not registered on its seat yet" -- both look
-    # like "no greeter session on a seat".So only trust a negative when a real user
-    # session is actually visible;.
+    # Make sure that either greeter or user are controlling the screen before continuing
     ${logout_status}    Check if logged out   1
     IF  not ${logout_status}
         ${user_session}    Run Keyword And Return Status    Verify login session
@@ -43,13 +40,18 @@ Log in, unlock and verify
     END
     IF  ${logout_status}
         Log in via GUI
-        Wait Until Keyword Succeeds    10s    1s    Verify login session
+        ${start_time}        Get Time    epoch
+        Wait Until Keyword Succeeds      10s    1s    Verify login session
+        Wait for desktop readiness       iterations=100
+        ${end_time}          Get Time    epoch
+        ${LOGIN_TIME}        Evaluate    ${end_time} - ${start_time}
+        Log                  Desktop opened after ${LOGIN_TIME} seconds   console=True
+        Set Test Variable    ${LOGIN_TIME}
     ELSE
         ${lock}       Check if locked
         IF  ${lock}   Unlock
+        Wait for desktop readiness
     END
-
-    Wait for desktop readiness   iterations=100
 
     Kill Initial Setup
     Disable automatic suspension

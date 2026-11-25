@@ -17,7 +17,14 @@ Resource            ../../resources/ssh_keywords.resource
 Test Setup          GUI Power Test Setup
 Test Teardown       GUI Power Test Teardown
 
-Test Tags           gui-power
+Test Tags           gui-power  lenovo-x1  darter-pro
+
+
+*** Variables ***
+${SHUTDOWN_LIMIT}              25
+${REBOOT_LIMIT}                90
+${LOGIN_LIMIT}                 10
+${LOGIN_TIME_AFTER_REBOOT}     ${EMPTY}
 
 
 *** Test Cases ***
@@ -25,7 +32,7 @@ Suspend and wake up from power menu
     [Documentation]   Suspend the device via GUI taskbar suspend icon and wake up.
     ...               Logs device power consumption during the test
     ...               if power measurement tooling is set.
-    [Tags]            SP-T492  lenovo-x1  darter-pro  lab-only
+    [Tags]            SP-T492  lab-only
     Start power measurement       ${BUILD_ID}   timeout=180
     # Connect back to gui-vm after power measurement has been started
     Switch to vm    ${GUI_VM}   user=${USER_LOGIN}
@@ -39,7 +46,7 @@ Suspend and wake up from power menu
 Lock and Unlock from power menu
     [Documentation]   Lock the screen via GUI power menu lock icon and check that the screen is locked.
     ...               Unlock lock screen by typing the password and check that desktop is available.
-    [Tags]            SP-T493  lock  lenovo-x1  darter-pro
+    [Tags]            SP-T493
     Select power menu option   text=Lock
     ${lock}           Check if locked   iterations=3   debug_screenshot=True
     IF  not ${lock}   FAIL    Failed to lock the screen
@@ -49,7 +56,7 @@ Lock and Unlock from power menu
 Lock screen with shortcut
     [Documentation]   Lock the screen via shortcut and verify locked state.
     ...               Unlock lock screen by typing the password and check that desktop is available.
-    [Tags]            SP-T401  lock  lenovo-x1  darter-pro
+    [Tags]            SP-T401
     Press Key(s)      LEFTMETA+ESC
     ${lock}           Check if locked   iterations=3   debug_screenshot=True
     IF  not ${lock}   FAIL    Failed to lock the screen
@@ -59,7 +66,7 @@ Lock screen with shortcut
 Reboot from power menu
     [Documentation]   Reboot the device via GUI power menu reboot icon.
     ...               Check that it shuts down. Check that it turns on and boots to login screen.
-    [Tags]            SP-T494  lenovo-x1  darter-pro  lab-only
+    [Tags]            SP-T494  lab-only
     Select power menu option   x=870   y=120   confirmation=True
     ${start_time}     Get Time    epoch
     Verify shutdown via network
@@ -67,28 +74,26 @@ Reboot from power menu
     ${end_time}       Get Time    epoch
     Login to laptop
     ${elapsed}        Evaluate    ${end_time} - ${start_time}
-    ${reboot_limit}   Convert To Integer    90
     Log               Reboot took ${elapsed} seconds   console=True
 
-    IF    ${elapsed} > ${reboot_limit}
-        Skip If Gui-vm Timed Out On Previous Boot   message=Reboot took too long: ${elapsed} seconds (expected < ${reboot_limit})
+    IF    ${elapsed} > ${REBOOT_LIMIT}
+        Skip If Gui-vm Timed Out On Previous Boot   message=Reboot took too long: ${elapsed} seconds (expected < ${REBOOT_LIMIT})
     END
-    Should Not Be True    ${elapsed} > ${reboot_limit}    msg=Reboot took too long: ${elapsed} seconds (expected < ${reboot_limit})
+    Should Not Be True    ${elapsed} > ${REBOOT_LIMIT}    msg=Reboot took too long: ${elapsed} seconds (expected < ${REBOOT_LIMIT})
 
 Shutdown from power menu
     [Documentation]   Shutdown the device via GUI power menu shutdown icon.
     ...               Check that it shuts down and then wakes up with a short power button press.
-    [Tags]            SP-T495  lenovo-x1  darter-pro  lab-only
+    [Tags]            SP-T495  lab-only
     Select power menu option   x=925   y=120   confirmation=True
-    Set Test Variable          ${max_elapsed}  25
 
     ${start_time}     Get Time    epoch
     ${end_time}       Wait Until Device Is Down
     ${elapsed}        Evaluate    ${end_time} - ${start_time}
     Log               Shutdown took ${elapsed} seconds   console=True
     #  Wait time extended from 10 to 20 due to SSRCSP-9231
-    IF    ${elapsed} <= ${max_elapsed}
-        ${wait_time}  Evaluate    ${max_elapsed} - ${elapsed} + 20
+    IF    ${elapsed} <= ${SHUTDOWN_LIMIT}
+        ${wait_time}  Evaluate    ${SHUTDOWN_LIMIT} - ${elapsed} + 20
         Wait          ${wait_time}
     ELSE
         Wait          20
@@ -96,26 +101,39 @@ Shutdown from power menu
     Turn Laptop On
     Connect After Reboot
     Login to laptop
+    Set Suite Variable    ${LOGIN_TIME_AFTER_REBOOT}    ${LOGIN_TIME}
 
-    IF    ${elapsed} > ${max_elapsed}
-        Skip If Gui-vm Timed Out On Previous Boot   message=Shutdown took too long: ${elapsed} seconds (expected < ${max_elapsed})
+    IF    ${elapsed} > ${SHUTDOWN_LIMIT}
+        Skip If Gui-vm Timed Out On Previous Boot   message=Shutdown took too long: ${elapsed} seconds (expected < ${SHUTDOWN_LIMIT})
     END
-    Should Not Be True    ${elapsed} > ${max_elapsed}    msg=Shutdown took too long: ${elapsed} seconds (expected < ${max_elapsed})
+    Should Not Be True    ${elapsed} > ${SHUTDOWN_LIMIT}    msg=Shutdown took too long: ${elapsed} seconds (expected < ${SHUTDOWN_LIMIT})
+
+Log in after reboot
+    [Documentation]   Check that login after reboot completes within the expected time.
+    ...               Login time is measured in Shutdown from power menu to avoid unnecessary reboot.
+    [Tags]            SP-T535  lab-only
+    Skip If              $LOGIN_TIME_AFTER_REBOOT == '${EMPTY}'    Login time was not saved in previous test
+    ${error_msg}         Set Variable   Login after reboot took too long: ${LOGIN_TIME_AFTER_REBOOT} seconds (expected < ${LOGIN_LIMIT})
+    Should Not Be True   ${LOGIN_TIME_AFTER_REBOOT} > ${LOGIN_LIMIT}   msg=${error_msg}
+    [Teardown]   Run Keyword If Test Failed   Run Keyword If   "storeDisk" in "${JOB}"   Run Keywords
+    ...    Log Error   StoreDisk login   ${error_msg}   AND
+    ...    SKIP   Known Issue: SSRCSP-9328 (${error_msg})
 
 Log out and log in from power menu
     [Documentation]   Logout via GUI power menu icon and verify logged out state.
     ...               Login and verify that desktop is available.
-    [Tags]            SP-T496  logoutlogin  lenovo-x1  darter-pro
+    [Tags]            SP-T496
     Skip If    ${DISABLE_LOGOUT}    This test can't run when logging out is disabled
     Select power menu option   text=LogOut   confirmation=True
     ${logout_status}            Check if logged out
     Should Be True              ${logout_status}    Logout failed
     Log in, unlock and verify
+    Should Not Be True          ${LOGIN_TIME} > ${LOGIN_LIMIT}    msg=Login took too long: ${LOGIN_TIME} seconds (expected < ${LOGIN_LIMIT})
 
 Log out and log in with shortcut
     [Documentation]   Logout via logout shortcut and verify logged out state.
     ...               Login and verify that desktop is available.
-    [Tags]            SP-T402  lenovo-x1  darter-pro
+    [Tags]            SP-T402
     Skip If    ${DISABLE_LOGOUT}    This test can't run when logging out is disabled
     Press Key(s)                LEFTMETA+LEFTSHIFT+ESC
     Locate on screen            text  Quit  10
@@ -123,10 +141,11 @@ Log out and log in with shortcut
     ${logout_status}            Check if logged out
     Should Be True              ${logout_status}    Logout failed
     Log in, unlock and verify
+    Should Not Be True          ${LOGIN_TIME} > ${LOGIN_LIMIT}    msg=Login took too long: ${LOGIN_TIME} seconds (expected < ${LOGIN_LIMIT})
 
 Suspend and wake up from lock screen
     [Documentation]   Suspend the device from lock screen suspend icon and wake up.
-    [Tags]            SP-T245  lenovo-x1  darter-pro  lab-only
+    [Tags]            SP-T245  lab-only
     Press Key(s)          LEFTMETA+ESC
     Locate on screen      image  ${LOCK_ICON}      0.95
     Locate and click      image  suspend-neg.png   0.95
@@ -141,7 +160,7 @@ GUI Power Test Setup
     Start screen recording
 
 GUI Power Test Teardown
-    IF  $TEST_STATUS != 'PASS' and 'took too long' not in $TEST_MESSAGE
+    IF  $TEST_STATUS == 'FAIL' and 'took too long' not in $TEST_MESSAGE
         Hard Reboot Device And Connect
         IF    ${IS_AVAILABLE}
             ssh_keywords.Save log   ${GUI_VM}  ${gui_power_log_since}
