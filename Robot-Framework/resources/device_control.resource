@@ -72,8 +72,7 @@ Soft Reboot Device And Connect
     [Documentation]  Reboot device from command line, reconnect and log in when testing a laptop.
     ...              By default laptops are rebooted from ${GUI_VM} and Orins from ${HOST}.
     [Arguments]      ${login}=True   ${vm}=${EMPTY}
-    # Extended time for Orins due to SSRCSP-9256 (disp-vm can time out during shutdown)
-    ${retry}               Set Variable If   ${IS_LAPTOP}   60s   90s
+    ${retry}               Set Variable    60s
     IF  $vm == '${EMPTY}'
         ${vm}   Set Variable If   ${IS_LAPTOP}   ${GUI_VM}   ${HOST}
     END

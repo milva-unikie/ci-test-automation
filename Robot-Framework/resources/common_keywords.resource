@@ -85,11 +85,6 @@ Get VM list
         Remove Values From List    ${vm_list}    ${EPHEM_VM}
     END
 
-    # Workaround for a known issue SSRCSP-9256
-    IF   ${IS_ORIN} and $GUI_VM in $vm_list
-        Remove Values From List    ${vm_list}    ${GUI_VM}
-    END
-
     RETURN    @{vm_list}
 
 Is process running

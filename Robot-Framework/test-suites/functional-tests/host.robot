@@ -52,11 +52,6 @@ Check all VMs are running
         ${status}     Run Keyword And Continue On Failure    Verify service status  service=microvm@${vm}
     END
 
-    # Workaround for a known issue SSRCSP-9256
-    IF   ${IS_ORIN}
-        ${status}     Run Keyword And Warn On Failure    Verify service status  service=microvm@${GUI_VM}
-    END
-
 Check serial connection
     [Documentation]    Check serial connection
     [Tags]             SP-T170  pre-merge  bat  lenovo-x1  darter-pro  orin-agx  orin-agx-64  orin-nx  lab-only

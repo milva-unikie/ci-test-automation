@@ -29,11 +29,7 @@
 
 | DATE SET   | TEST CASE / KEYWORD                      | TICKET / Additional Data                                                                               | Error Log Context       |
 | ---------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------- |
-| 24.11.2026 | Check all VMs are running                | SSRCSP-9256, check GUI_VM with warning on Orin                                                         |                         |
 | 24.11.2026 | Check logging rate against history       | Interval was lowered, limits need to be reviewed in a few days                                         |                         |
-| 16.11.2026 | Soft Reboot Device And Connect           | SSRCSP-9256, extend Orin reconnection time from 60 to 90 seconds                                       |                         |
-| 16.11.2026 | Check SPIRE agent count                  | SSRCSP-9256, allow one extra spire agent for Orins because there might be one running in gui-vm        |                         |
-| 16.11.2026 | Get VM list                              | SSRCSP-9256, gui-vm is removed from the list on Orins                                                  |                         |
 | 16.11.2026 | Start screen recording                   | SSRCSP-9253, record screen directly without portal                                                     |                         |
 | 11.11.2026 | Hard Reboot Device And Connect           | Press ON twice if laptop did not boot after first press                                                | ON pressed twice        |
 | 16.10.2026 | Try To Recover SSH Connection Via Serial | In Check If Device Is Available restart net-vm if only serial is available after reboot                | SSH recovery            |
