@@ -48,8 +48,13 @@ Check all VMs are running
     [Documentation]    Check that all VMs are running.
     [Tags]             SP-T502  pre-merge  bat  lenovo-x1  darter-pro  dell-7330  orin-agx  orin-agx-64  orin-nx  fmo
     @{vms}      Get VM list
-    FOR   ${vm}  IN  @{vms}
-        ${status}     Run Keyword And Continue On Failure    Verify service status  service=microvm@${vm}
+    FOR    ${i}    IN RANGE    30
+        Log    ITERATION ${i}   console=True
+        Sleep   30
+        FOR   ${vm}  IN  @{vms}
+            ${status}     Run Keyword And Continue On Failure    Verify service status  service=microvm@${vm}
+        END
+        Soft Reboot Device And Connect
     END
 
 Check serial connection

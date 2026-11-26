@@ -9,6 +9,6 @@ Resource            ../../resources/setup_keywords.resource
 
 Suite Setup         Prepare Test Environment
 Suite Teardown      Clean Up Test Environment
-Test Timeout        10 minutes
 
+# Test Timeout        10 minutes
 Test Tags           regression  functional
